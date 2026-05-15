@@ -1,15 +1,21 @@
 [project]
 name = "promptdex"
 version = "0.1.0"
-description = "A local-first Pokédex of AI prompts."
+description = "A local-first Pokedex of AI prompts."
 readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
 dependencies = [
     "fastapi>=0.111.0",
     "pydantic>=2.7.0",
     "sqlalchemy>=2.0.30",
     "uvicorn[standard]>=0.30.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/AlvaroManso/promptdex"
+Repository = "https://github.com/AlvaroManso/promptdex"
+Issues = "https://github.com/AlvaroManso/promptdex/issues"
 
 [dependency-groups]
 dev = [
