@@ -10,7 +10,7 @@
     <main class="shell">
       <header class="topbar">
         <div>
-          <p class="eyebrow">Local prompt index</p>
+          <p class="eyebrow">Biblioteca local / Local prompt index</p>
           <h1>PromptDex</h1>
         </div>
         <div class="dex-light" aria-hidden="true">
@@ -20,50 +20,69 @@
 
       <section class="controls" aria-label="Prompt filters">
         <label class="search-box">
-          <span>Search</span>
+          <span>Buscar / Search</span>
           <input id="searchInput" type="search" placeholder="Debug agents, landing copy..." />
         </label>
 
         <label>
-          <span>Category</span>
+          <span>Categoria / Category</span>
           <select id="categoryFilter">
-            <option value="">All categories</option>
+            <option value="">Todas / All categories</option>
           </select>
         </label>
 
         <label>
-          <span>Tag</span>
+          <span>Etiqueta / Tag</span>
           <input id="tagFilter" type="search" placeholder="codex" />
+        </label>
+
+        <label>
+          <span>Orden / Sort</span>
+          <select id="sortSelect">
+            <option value="created_desc">Nuevos / Newest</option>
+            <option value="rating_desc">Rating</option>
+            <option value="favorite_desc">Favoritos / Favorites</option>
+            <option value="updated_desc">Actualizados / Updated</option>
+            <option value="last_used_desc">Usados / Last used</option>
+          </select>
         </label>
 
         <button id="favoriteFilter" class="toggle" type="button" aria-pressed="false">
           <span class="star">★</span>
-          Favorites
+          Favoritos
         </button>
+
+        <button id="seedLibrary" class="toggle library" type="button">
+          Biblioteca ES/EN
+        </button>
+
+        <button id="exportBackup" class="toggle" type="button">Export JSON</button>
+        <button id="importBackup" class="toggle" type="button">Import JSON</button>
+        <input id="importFile" type="file" accept="application/json,.json" hidden />
       </section>
 
       <section class="workspace">
         <aside class="editor-panel" aria-label="Prompt editor">
           <div class="panel-title">
-            <h2 id="formTitle">New prompt</h2>
-            <button id="resetForm" class="ghost" type="button">Clear</button>
+            <h2 id="formTitle">Nuevo prompt / New prompt</h2>
+            <button id="resetForm" class="ghost" type="button">Limpiar / Clear</button>
           </div>
 
           <form id="promptForm">
             <input id="promptId" type="hidden" />
 
             <label>
-              <span>Title</span>
+              <span>Titulo / Title</span>
               <input id="titleInput" required maxlength="160" placeholder="Code review lens" />
             </label>
 
             <label>
-              <span>Category</span>
+              <span>Categoria / Category</span>
               <select id="categoryInput" required></select>
             </label>
 
             <label>
-              <span>Tags</span>
+              <span>Etiquetas / Tags</span>
               <input id="tagsInput" placeholder="codex, review, python" />
             </label>
 
@@ -73,7 +92,7 @@
                 id="bodyInput"
                 required
                 rows="10"
-                placeholder="Paste the prompt you want to keep close."
+                placeholder="Pega el prompt que quieres guardar. / Paste the prompt you want to keep close."
               ></textarea>
             </label>
 
@@ -85,23 +104,24 @@
 
               <label class="favorite-check">
                 <input id="favoriteInput" type="checkbox" />
-                <span>Favorite</span>
+                <span>Favorito / Favorite</span>
               </label>
             </div>
 
-            <button class="primary" type="submit">Save prompt</button>
+            <button class="primary" type="submit">Guardar / Save</button>
           </form>
         </aside>
 
         <section class="list-panel" aria-live="polite">
           <div class="panel-title">
-            <h2>Prompt cards</h2>
+            <h2>Tarjetas / Prompt cards</h2>
             <p id="promptCount">0 prompts</p>
           </div>
+          <p class="shortcuts">Atajos / Shortcuts: Ctrl+S guardar, Ctrl+K buscar, Ctrl+Shift+C copiar primera tarjeta.</p>
           <div id="promptList" class="prompt-grid"></div>
           <div id="emptyState" class="empty" hidden>
-            <strong>No prompts found.</strong>
-            <span>Adjust the filters or add a new keeper.</span>
+            <strong>No hay prompts / No prompts found.</strong>
+            <span>Ajusta filtros o agrega uno nuevo. / Adjust filters or add a new keeper.</span>
           </div>
         </section>
       </section>
@@ -126,9 +146,10 @@
         </div>
 
         <div class="card-actions">
-          <button class="copy-button" type="button">Copy</button>
-          <button class="edit-button secondary" type="button">Edit</button>
-          <button class="delete-button danger" type="button">Delete</button>
+          <button class="copy-button" type="button">Copiar</button>
+          <button class="duplicate-button secondary" type="button">Duplicar</button>
+          <button class="edit-button secondary" type="button">Editar</button>
+          <button class="delete-button danger" type="button">Borrar</button>
         </div>
       </article>
     </template>

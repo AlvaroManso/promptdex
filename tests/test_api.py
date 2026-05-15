@@ -10,7 +10,7 @@ from promptdex.main import create_app
 
 @pytest.fixture
 def client(tmp_path: Path) -> TestClient:
-    app = create_app(f"sqlite:///{tmp_path / 'promptdex.db'}")
+    app = create_app(f"sqlite:///{tmp_path / 'promptdex.db'}", seed_library=False)
     with TestClient(app) as test_client:
         yield test_client
 
@@ -92,3 +92,68 @@ def test_delete_prompt(client: TestClient) -> None:
 
     assert response.status_code == 204
     assert client.get("/api/prompts").json() == []
+
+
+def test_sort_prompts_by_rating_favorite_updated_and_last_used(client: TestClient) -> None:
+    low = create_prompt(client, title="Low value", rating=2, favorite=False)
+    high = create_prompt(client, title="High value", rating=5, favorite=True)
+
+    rating_response = client.get("/api/prompts", params={"sort": "rating_desc"})
+    favorite_response = client.get("/api/prompts", params={"sort": "favorite_desc"})
+
+    client.put(f"/api/prompts/{low['id']}", json={"title": "Recently updated"})
+    updated_response = client.get("/api/prompts", params={"sort": "updated_desc"})
+
+    client.post(f"/api/prompts/{high['id']}/use")
+    last_used_response = client.get("/api/prompts", params={"sort": "last_used_desc"})
+
+    assert [prompt["title"] for prompt in rating_response.json()] == ["High value", "Low value"]
+    assert [prompt["title"] for prompt in favorite_response.json()] == ["High value", "Low value"]
+    assert updated_response.json()[0]["title"] == "Recently updated"
+    assert last_used_response.json()[0]["title"] == "High value"
+
+
+def test_duplicate_prompt_creates_editable_copy(client: TestClient) -> None:
+    prompt = create_prompt(client, title="Research sprint", tags=["research", "en"])
+
+    response = client.post(f"/api/prompts/{prompt['id']}/duplicate")
+
+    assert response.status_code == 201
+    duplicate = response.json()
+    assert duplicate["id"] != prompt["id"]
+    assert duplicate["title"] == "Research sprint (copy)"
+    assert duplicate["body"] == prompt["body"]
+    assert duplicate["tags"] == ["research", "en"]
+    assert duplicate["last_used_at"] is None
+
+
+def test_export_and_import_json_backup(client: TestClient, tmp_path: Path) -> None:
+    create_prompt(client, title="Backup me", tags=["backup", "es"], favorite=True)
+
+    export_response = client.get("/api/backup/export")
+    backup = export_response.json()
+
+    assert export_response.status_code == 200
+    assert backup["version"] == 1
+    assert backup["prompts"][0]["title"] == "Backup me"
+
+    import_app = create_app(f"sqlite:///{tmp_path / 'imported.db'}", seed_library=False)
+    with TestClient(import_app) as import_client:
+        import_response = import_client.post("/api/backup/import", json=backup)
+
+        assert import_response.status_code == 201
+        assert import_response.json()["imported"] == 1
+        assert import_client.get("/api/prompts").json()[0]["title"] == "Backup me"
+
+
+def test_seed_library_loads_bilingual_prompts_once(client: TestClient) -> None:
+    first_response = client.post("/api/library/seed")
+    second_response = client.post("/api/library/seed")
+
+    prompts = client.get("/api/prompts").json()
+    tags = {tag for prompt in prompts for tag in prompt["tags"]}
+
+    assert first_response.status_code == 201
+    assert first_response.json()["imported"] >= 20
+    assert second_response.json()["imported"] == 0
+    assert {"es", "en", "library-2026-05"}.issubset(tags)

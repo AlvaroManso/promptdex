@@ -4,13 +4,19 @@ const state = {
   rating: 3,
   favoriteOnly: false,
   copiedId: null,
+  visiblePrompts: [],
 };
 
 const selectors = {
   search: document.querySelector("#searchInput"),
   categoryFilter: document.querySelector("#categoryFilter"),
   tagFilter: document.querySelector("#tagFilter"),
+  sort: document.querySelector("#sortSelect"),
   favoriteFilter: document.querySelector("#favoriteFilter"),
+  seedLibrary: document.querySelector("#seedLibrary"),
+  exportBackup: document.querySelector("#exportBackup"),
+  importBackup: document.querySelector("#importBackup"),
+  importFile: document.querySelector("#importFile"),
   list: document.querySelector("#promptList"),
   empty: document.querySelector("#emptyState"),
   count: document.querySelector("#promptCount"),
@@ -54,10 +60,10 @@ function parseTags(value) {
 
 function formatDate(value) {
   if (!value) {
-    return "Never used";
+    return "Nunca usado / Never used";
   }
 
-  return `Used ${new Intl.DateTimeFormat(undefined, {
+  return `Usado / Used ${new Intl.DateTimeFormat(undefined, {
     month: "short",
     day: "numeric",
     hour: "2-digit",
@@ -117,6 +123,7 @@ function promptMatchesFilters(prompt) {
 
 function renderPrompts() {
   const prompts = state.prompts.filter(promptMatchesFilters);
+  state.visiblePrompts = prompts;
   selectors.list.replaceChildren();
   selectors.count.textContent = `${prompts.length} prompt${prompts.length === 1 ? "" : "s"}`;
   selectors.empty.hidden = prompts.length > 0;
@@ -148,20 +155,10 @@ function renderPrompts() {
     );
 
     const copyButton = card.querySelector(".copy-button");
-    copyButton.textContent = state.copiedId === prompt.id ? "Copied" : "Copy";
-    copyButton.addEventListener("click", async () => {
-      await navigator.clipboard.writeText(prompt.body);
-      state.copiedId = prompt.id;
-      renderPrompts();
-      await markUsed(prompt.id);
-      window.setTimeout(() => {
-        if (state.copiedId === prompt.id) {
-          state.copiedId = null;
-          renderPrompts();
-        }
-      }, 1100);
-    });
+    copyButton.textContent = state.copiedId === prompt.id ? "Copiado" : "Copiar";
+    copyButton.addEventListener("click", () => copyPrompt(prompt));
 
+    card.querySelector(".duplicate-button").addEventListener("click", () => duplicatePrompt(prompt.id));
     card.querySelector(".edit-button").addEventListener("click", () => fillForm(prompt));
     card.querySelector(".delete-button").addEventListener("click", () => deletePrompt(prompt));
     selectors.list.append(card);
@@ -171,7 +168,7 @@ function renderPrompts() {
 function resetForm() {
   selectors.form.reset();
   selectors.id.value = "";
-  selectors.formTitle.textContent = "New prompt";
+  selectors.formTitle.textContent = "Nuevo prompt / New prompt";
   selectors.favorite.checked = false;
   setFormRating(3);
 }
@@ -188,13 +185,14 @@ function fillForm(prompt) {
   selectors.tags.value = prompt.tags.join(", ");
   selectors.body.value = prompt.body;
   selectors.favorite.checked = prompt.favorite;
-  selectors.formTitle.textContent = "Edit prompt";
+  selectors.formTitle.textContent = "Editar prompt / Edit prompt";
   setFormRating(prompt.rating);
   selectors.title.focus();
 }
 
 async function loadPrompts() {
-  state.prompts = await request("/api/prompts");
+  const params = new URLSearchParams({ sort: selectors.sort.value });
+  state.prompts = await request(`/api/prompts?${params}`);
   renderPrompts();
 }
 
@@ -213,6 +211,27 @@ async function markUsed(id) {
   renderPrompts();
 }
 
+async function copyPrompt(prompt) {
+  await navigator.clipboard.writeText(prompt.body);
+  state.copiedId = prompt.id;
+  renderPrompts();
+  await markUsed(prompt.id);
+  window.setTimeout(() => {
+    if (state.copiedId === prompt.id) {
+      state.copiedId = null;
+      renderPrompts();
+    }
+  }, 1100);
+}
+
+async function duplicatePrompt(id) {
+  const duplicate = await request(`/api/prompts/${id}/duplicate`, { method: "POST" });
+  state.prompts = [duplicate, ...state.prompts];
+  selectors.sort.value = "created_desc";
+  renderPrompts();
+  fillForm(duplicate);
+}
+
 async function deletePrompt(prompt) {
   const confirmed = window.confirm(`Delete "${prompt.title}"?`);
   if (!confirmed) {
@@ -226,6 +245,39 @@ async function deletePrompt(prompt) {
   if (selectors.id.value === String(prompt.id)) {
     resetForm();
   }
+}
+
+async function seedLibrary() {
+  const result = await request("/api/library/seed", { method: "POST" });
+  await loadPrompts();
+  selectors.seedLibrary.textContent =
+    result.imported > 0 ? `+${result.imported} ES/EN` : "Biblioteca lista";
+  window.setTimeout(() => {
+    selectors.seedLibrary.textContent = "Biblioteca ES/EN";
+  }, 1400);
+}
+
+async function exportBackup() {
+  const backup = await request("/api/backup/export");
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const date = new Date().toISOString().slice(0, 10);
+  link.href = url;
+  link.download = `promptdex-backup-${date}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+async function importBackupFile(file) {
+  const text = await file.text();
+  const backup = JSON.parse(text);
+  await request("/api/backup/import", {
+    method: "POST",
+    body: JSON.stringify(backup),
+  });
+  selectors.importFile.value = "";
+  await loadPrompts();
 }
 
 selectors.form.addEventListener("submit", async (event) => {
@@ -259,10 +311,54 @@ selectors.resetForm.addEventListener("click", resetForm);
 selectors.search.addEventListener("input", renderPrompts);
 selectors.categoryFilter.addEventListener("change", renderPrompts);
 selectors.tagFilter.addEventListener("input", renderPrompts);
+selectors.sort.addEventListener("change", loadPrompts);
 selectors.favoriteFilter.addEventListener("click", () => {
   state.favoriteOnly = !state.favoriteOnly;
   selectors.favoriteFilter.setAttribute("aria-pressed", String(state.favoriteOnly));
   renderPrompts();
+});
+selectors.seedLibrary.addEventListener("click", seedLibrary);
+selectors.exportBackup.addEventListener("click", exportBackup);
+selectors.importBackup.addEventListener("click", () => selectors.importFile.click());
+selectors.importFile.addEventListener("change", () => {
+  const [file] = selectors.importFile.files;
+  if (file) {
+    importBackupFile(file);
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  const modifier = event.ctrlKey || event.metaKey;
+  const activeElement = document.activeElement;
+  const isTyping =
+    activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement;
+
+  if (modifier && event.key.toLowerCase() === "s") {
+    event.preventDefault();
+    selectors.form.requestSubmit();
+    return;
+  }
+
+  if (modifier && event.key.toLowerCase() === "k") {
+    event.preventDefault();
+    selectors.search.focus();
+    selectors.search.select();
+    return;
+  }
+
+  if (modifier && event.shiftKey && event.key.toLowerCase() === "c") {
+    event.preventDefault();
+    const [firstPrompt] = state.visiblePrompts;
+    if (firstPrompt) {
+      copyPrompt(firstPrompt);
+    }
+    return;
+  }
+
+  if (!isTyping && event.key === "/") {
+    event.preventDefault();
+    selectors.search.focus();
+  }
 });
 
 state.categories = await request("/api/categories");

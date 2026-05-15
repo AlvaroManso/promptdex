@@ -11,6 +11,10 @@ PromptDex is a local-first Pokédex of prompts for storing, searching, rating, f
 - Rate prompts from 1 to 5 stars
 - Copy prompt text to the clipboard
 - Track the last used date when a prompt is copied
+- Duplicate useful prompts
+- Sort by newest, rating, favorites, updated, and last used
+- Export and import JSON backups
+- Seed a bilingual Spanish/English prompt library curated for May 2026 workflows
 - Persist data locally in SQLite
 
 ## Requirements
@@ -28,6 +32,15 @@ uv run uvicorn promptdex.main:app --reload --host 127.0.0.1 --port 8000
 Open [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
 Prompt data is stored in `promptdex.db` in the project root by default.
+
+The app auto-loads the built-in bilingual prompt library when a fresh database is empty. You can also press `Biblioteca ES/EN` in the UI to load any missing built-in prompts.
+
+## Shortcuts
+
+- `Ctrl+S` / `Cmd+S`: save the current form
+- `Ctrl+K` / `Cmd+K`: focus search
+- `Ctrl+Shift+C` / `Cmd+Shift+C`: copy the first visible prompt
+- `/`: focus search when you are not typing in a field
 
 ## Development
 
@@ -57,4 +70,8 @@ uv run ruff format .
 - `PUT /api/prompts/{id}`
 - `DELETE /api/prompts/{id}`
 - `POST /api/prompts/{id}/use`
+- `POST /api/prompts/{id}/duplicate`
 - `GET /api/categories`
+- `GET /api/backup/export`
+- `POST /api/backup/import`
+- `POST /api/library/seed`

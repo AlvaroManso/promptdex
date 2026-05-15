@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -87,3 +88,43 @@ class PromptRead(BaseModel):
     created_at: datetime
     updated_at: datetime
     last_used_at: datetime | None
+
+
+class PromptBackup(BaseModel):
+    title: str = Field(min_length=1, max_length=160)
+    body: str = Field(min_length=1)
+    category: str = Field(min_length=1, max_length=80)
+    tags: list[str] = Field(default_factory=list)
+    rating: int = Field(default=3, ge=1, le=5)
+    favorite: bool = False
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+    last_used_at: datetime | None = None
+
+    @field_validator("title", "body", "category")
+    @classmethod
+    def strip_backup_text(cls, value: str) -> str:
+        return PromptCreate.strip_required_text(value)
+
+    @field_validator("tags")
+    @classmethod
+    def normalize_backup_tags(cls, value: list[str]) -> list[str]:
+        return PromptCreate.normalize_tags(value)
+
+
+class BackupExport(BaseModel):
+    version: Literal[1] = 1
+    exported_at: datetime
+    prompts: list[PromptBackup]
+
+
+class BackupImport(BaseModel):
+    version: Literal[1] = 1
+    replace: bool = False
+    prompts: list[PromptBackup]
+
+
+class ImportResult(BaseModel):
+    imported: int
+    skipped: int = 0
+    total: int
