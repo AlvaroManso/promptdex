@@ -1,6 +1,7 @@
 const state = {
   prompts: [],
   categories: [],
+  language: localStorage.getItem("promptdex-language") || "es",
   rating: 3,
   favoriteOnly: false,
   copiedId: null,
@@ -13,6 +14,7 @@ const selectors = {
   categoryFilter: document.querySelector("#categoryFilter"),
   tagFilter: document.querySelector("#tagFilter"),
   sort: document.querySelector("#sortSelect"),
+  languageToggle: document.querySelector("#languageToggle"),
   favoriteFilter: document.querySelector("#favoriteFilter"),
   seedLibrary: document.querySelector("#seedLibrary"),
   exportBackup: document.querySelector("#exportBackup"),
@@ -33,6 +35,109 @@ const selectors = {
   favorite: document.querySelector("#favoriteInput"),
   rating: document.querySelector("#ratingInput"),
 };
+
+const translations = {
+  es: {
+    allCategories: "Todas",
+    bodyPlaceholder: "Pega el prompt que quieres guardar.",
+    cardsTitle: "Tarjetas",
+    categoryLabel: "Categoria",
+    clear: "Limpiar",
+    close: "Cerrar",
+    copied: "Copiado",
+    copy: "Copiar",
+    delete: "Borrar",
+    duplicate: "Duplicar",
+    edit: "Editar",
+    editPrompt: "Editar prompt",
+    emptyHint: "Ajusta filtros o agrega uno nuevo.",
+    emptyTitle: "No hay prompts.",
+    eyebrow: "Biblioteca local",
+    favorite: "Favorito",
+    favorites: "Favoritos",
+    languageButton: "EN",
+    languageLabel: "Cambiar idioma a ingles",
+    lastUsedPrefix: "Usado",
+    libraryReady: "Biblioteca lista",
+    newPrompt: "Nuevo prompt",
+    neverUsed: "Nunca usado",
+    read: "Leer",
+    save: "Guardar",
+    searchLabel: "Buscar",
+    searchPlaceholder: "Debug agents, landing copy...",
+    shortcuts: "Atajos: Ctrl+S guardar, Ctrl+K buscar, Ctrl+Shift+C copiar primera tarjeta.",
+    sortFavorites: "Favoritos",
+    sortLabel: "Orden",
+    sortLastUsed: "Usados",
+    sortNewest: "Nuevos",
+    sortUpdated: "Actualizados",
+    tagLabel: "Etiqueta",
+    tagPlaceholder: "codex",
+    tagsLabel: "Etiquetas",
+    titleLabel: "Titulo",
+  },
+  en: {
+    allCategories: "All categories",
+    bodyPlaceholder: "Paste the prompt you want to keep close.",
+    cardsTitle: "Prompt cards",
+    categoryLabel: "Category",
+    clear: "Clear",
+    close: "Close",
+    copied: "Copied",
+    copy: "Copy",
+    delete: "Delete",
+    duplicate: "Duplicate",
+    edit: "Edit",
+    editPrompt: "Edit prompt",
+    emptyHint: "Adjust filters or add a new keeper.",
+    emptyTitle: "No prompts found.",
+    eyebrow: "Local prompt index",
+    favorite: "Favorite",
+    favorites: "Favorites",
+    languageButton: "ES",
+    languageLabel: "Switch language to Spanish",
+    lastUsedPrefix: "Used",
+    libraryReady: "Library ready",
+    newPrompt: "New prompt",
+    neverUsed: "Never used",
+    read: "Read",
+    save: "Save",
+    searchLabel: "Search",
+    searchPlaceholder: "Debug agents, landing copy...",
+    shortcuts: "Shortcuts: Ctrl+S save, Ctrl+K search, Ctrl+Shift+C copy first card.",
+    sortFavorites: "Favorites",
+    sortLabel: "Sort",
+    sortLastUsed: "Last used",
+    sortNewest: "Newest",
+    sortUpdated: "Updated",
+    tagLabel: "Tag",
+    tagPlaceholder: "codex",
+    tagsLabel: "Tags",
+    titleLabel: "Title",
+  },
+};
+
+function t(key) {
+  return translations[state.language][key];
+}
+
+function applyLanguage() {
+  document.documentElement.lang = state.language;
+
+  for (const element of document.querySelectorAll("[data-i18n]")) {
+    element.textContent = t(element.dataset.i18n);
+  }
+
+  for (const element of document.querySelectorAll("[data-i18n-placeholder]")) {
+    element.placeholder = t(element.dataset.i18nPlaceholder);
+  }
+
+  selectors.languageToggle.textContent = t("languageButton");
+  selectors.languageToggle.setAttribute("aria-label", t("languageLabel"));
+  selectors.formTitle.textContent = t(
+    selectors.formTitle.dataset.mode === "edit" ? "editPrompt" : "newPrompt",
+  );
+}
 
 async function request(path, options = {}) {
   const response = await fetch(path, {
@@ -61,10 +166,10 @@ function parseTags(value) {
 
 function formatDate(value) {
   if (!value) {
-    return "Nunca usado / Never used";
+    return t("neverUsed");
   }
 
-  return `Usado / Used ${new Intl.DateTimeFormat(undefined, {
+  return `${t("lastUsedPrefix")} ${new Intl.DateTimeFormat(undefined, {
     month: "short",
     day: "numeric",
     hour: "2-digit",
@@ -79,7 +184,7 @@ function renderRating(container, value, onChange) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `star-button${score <= value ? " active" : ""}`;
-    button.textContent = "★";
+    button.textContent = "\u2605";
     button.setAttribute("aria-label", `${score} star${score === 1 ? "" : "s"}`);
     button.addEventListener("click", () => onChange(score));
     container.append(button);
@@ -141,7 +246,7 @@ function renderPrompts() {
     card.querySelector(".last-used").textContent = formatDate(prompt.last_used_at);
 
     const favoriteButton = card.querySelector(".favorite-button");
-    favoriteButton.textContent = prompt.favorite ? "★" : "☆";
+    favoriteButton.textContent = prompt.favorite ? "\u2605" : "\u2606";
     favoriteButton.classList.toggle("is-favorite", prompt.favorite);
     favoriteButton.addEventListener("click", () =>
       updatePrompt(prompt.id, { favorite: !prompt.favorite }),
@@ -159,17 +264,20 @@ function renderPrompts() {
       updatePrompt(prompt.id, { rating }),
     );
 
-    const copyButton = card.querySelector(".copy-button");
-    copyButton.textContent = state.copiedId === prompt.id ? "Copiado" : "Copiar";
-    copyButton.addEventListener("click", () => copyPrompt(prompt));
-
     const readButton = card.querySelector(".read-button");
-    readButton.textContent = isExpanded ? "Cerrar" : "Leer";
+    readButton.textContent = isExpanded ? t("close") : t("read");
     readButton.setAttribute("aria-expanded", String(isExpanded));
     readButton.addEventListener("click", () => togglePromptBody(prompt.id));
 
+    const copyButton = card.querySelector(".copy-button");
+    copyButton.textContent = state.copiedId === prompt.id ? t("copied") : t("copy");
+    copyButton.addEventListener("click", () => copyPrompt(prompt));
+
+    card.querySelector(".duplicate-button").textContent = t("duplicate");
     card.querySelector(".duplicate-button").addEventListener("click", () => duplicatePrompt(prompt.id));
+    card.querySelector(".edit-button").textContent = t("edit");
     card.querySelector(".edit-button").addEventListener("click", () => fillForm(prompt));
+    card.querySelector(".delete-button").textContent = t("delete");
     card.querySelector(".delete-button").addEventListener("click", () => deletePrompt(prompt));
     selectors.list.append(card);
   }
@@ -187,7 +295,8 @@ function togglePromptBody(id) {
 function resetForm() {
   selectors.form.reset();
   selectors.id.value = "";
-  selectors.formTitle.textContent = "Nuevo prompt / New prompt";
+  selectors.formTitle.dataset.mode = "new";
+  selectors.formTitle.textContent = t("newPrompt");
   selectors.favorite.checked = false;
   setFormRating(3);
 }
@@ -204,7 +313,8 @@ function fillForm(prompt) {
   selectors.tags.value = prompt.tags.join(", ");
   selectors.body.value = prompt.body;
   selectors.favorite.checked = prompt.favorite;
-  selectors.formTitle.textContent = "Editar prompt / Edit prompt";
+  selectors.formTitle.dataset.mode = "edit";
+  selectors.formTitle.textContent = t("editPrompt");
   setFormRating(prompt.rating);
   selectors.title.focus();
 }
@@ -270,7 +380,7 @@ async function seedLibrary() {
   const result = await request("/api/library/seed", { method: "POST" });
   await loadPrompts();
   selectors.seedLibrary.textContent =
-    result.imported > 0 ? `+${result.imported} ES/EN` : "Biblioteca lista";
+    result.imported > 0 ? `+${result.imported} ES/EN` : t("libraryReady");
   window.setTimeout(() => {
     selectors.seedLibrary.textContent = "Biblioteca ES/EN";
   }, 1400);
@@ -331,6 +441,12 @@ selectors.search.addEventListener("input", renderPrompts);
 selectors.categoryFilter.addEventListener("change", renderPrompts);
 selectors.tagFilter.addEventListener("input", renderPrompts);
 selectors.sort.addEventListener("change", loadPrompts);
+selectors.languageToggle.addEventListener("click", () => {
+  state.language = state.language === "es" ? "en" : "es";
+  localStorage.setItem("promptdex-language", state.language);
+  applyLanguage();
+  renderPrompts();
+});
 selectors.favoriteFilter.addEventListener("click", () => {
   state.favoriteOnly = !state.favoriteOnly;
   selectors.favoriteFilter.setAttribute("aria-pressed", String(state.favoriteOnly));
@@ -382,5 +498,6 @@ document.addEventListener("keydown", (event) => {
 
 state.categories = await request("/api/categories");
 populateCategories();
+applyLanguage();
 setFormRating(3);
 await loadPrompts();

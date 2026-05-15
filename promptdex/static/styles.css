@@ -314,6 +314,11 @@ form {
   background: #e8f7ef;
 }
 
+.language {
+  color: #ffffff;
+  background: var(--ink);
+}
+
 .toggle[aria-pressed="true"] {
   background: var(--yellow);
 }

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,7 +10,7 @@
     <main class="shell">
       <header class="topbar">
         <div>
-          <p class="eyebrow">Biblioteca local / Local prompt index</p>
+          <p class="eyebrow" data-i18n="eyebrow">Biblioteca local</p>
           <h1>PromptDex</h1>
         </div>
         <div class="dex-light" aria-hidden="true">
@@ -20,42 +20,48 @@
 
       <section class="controls" aria-label="Prompt filters">
         <label class="search-box">
-          <span>Buscar / Search</span>
-          <input id="searchInput" type="search" placeholder="Debug agents, landing copy..." />
+          <span data-i18n="searchLabel">Buscar</span>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Debug agents, landing copy..."
+            data-i18n-placeholder="searchPlaceholder"
+          />
         </label>
 
         <label>
-          <span>Categoria / Category</span>
+          <span data-i18n="categoryLabel">Categoria</span>
           <select id="categoryFilter">
-            <option value="">Todas / All categories</option>
+            <option value="" data-i18n="allCategories">Todas</option>
           </select>
         </label>
 
         <label>
-          <span>Etiqueta / Tag</span>
-          <input id="tagFilter" type="search" placeholder="codex" />
+          <span data-i18n="tagLabel">Etiqueta</span>
+          <input id="tagFilter" type="search" placeholder="codex" data-i18n-placeholder="tagPlaceholder" />
         </label>
 
         <label>
-          <span>Orden / Sort</span>
+          <span data-i18n="sortLabel">Orden</span>
           <select id="sortSelect">
-            <option value="created_desc">Nuevos / Newest</option>
+            <option value="created_desc" data-i18n="sortNewest">Nuevos</option>
             <option value="rating_desc">Rating</option>
-            <option value="favorite_desc">Favoritos / Favorites</option>
-            <option value="updated_desc">Actualizados / Updated</option>
-            <option value="last_used_desc">Usados / Last used</option>
+            <option value="favorite_desc" data-i18n="sortFavorites">Favoritos</option>
+            <option value="updated_desc" data-i18n="sortUpdated">Actualizados</option>
+            <option value="last_used_desc" data-i18n="sortLastUsed">Usados</option>
           </select>
         </label>
+
+        <button id="languageToggle" class="toggle language" type="button" aria-label="Cambiar idioma">
+          EN
+        </button>
 
         <button id="favoriteFilter" class="toggle" type="button" aria-pressed="false">
-          <span class="star">★</span>
-          Favoritos
+          <span class="star">&#9733;</span>
+          <span data-i18n="favorites">Favoritos</span>
         </button>
 
-        <button id="seedLibrary" class="toggle library" type="button">
-          Biblioteca ES/EN
-        </button>
-
+        <button id="seedLibrary" class="toggle library" type="button">Biblioteca ES/EN</button>
         <button id="exportBackup" class="toggle" type="button">Export JSON</button>
         <button id="importBackup" class="toggle" type="button">Import JSON</button>
         <input id="importFile" type="file" accept="application/json,.json" hidden />
@@ -64,25 +70,25 @@
       <section class="workspace">
         <aside class="editor-panel" aria-label="Prompt editor">
           <div class="panel-title">
-            <h2 id="formTitle">Nuevo prompt / New prompt</h2>
-            <button id="resetForm" class="ghost" type="button">Limpiar / Clear</button>
+            <h2 id="formTitle" data-mode="new">Nuevo prompt</h2>
+            <button id="resetForm" class="ghost" type="button" data-i18n="clear">Limpiar</button>
           </div>
 
           <form id="promptForm">
             <input id="promptId" type="hidden" />
 
             <label>
-              <span>Titulo / Title</span>
+              <span data-i18n="titleLabel">Titulo</span>
               <input id="titleInput" required maxlength="160" placeholder="Code review lens" />
             </label>
 
             <label>
-              <span>Categoria / Category</span>
+              <span data-i18n="categoryLabel">Categoria</span>
               <select id="categoryInput" required></select>
             </label>
 
             <label>
-              <span>Etiquetas / Tags</span>
+              <span data-i18n="tagsLabel">Etiquetas</span>
               <input id="tagsInput" placeholder="codex, review, python" />
             </label>
 
@@ -92,7 +98,8 @@
                 id="bodyInput"
                 required
                 rows="10"
-                placeholder="Pega el prompt que quieres guardar. / Paste the prompt you want to keep close."
+                placeholder="Pega el prompt que quieres guardar."
+                data-i18n-placeholder="bodyPlaceholder"
               ></textarea>
             </label>
 
@@ -104,24 +111,26 @@
 
               <label class="favorite-check">
                 <input id="favoriteInput" type="checkbox" />
-                <span>Favorito / Favorite</span>
+                <span data-i18n="favorite">Favorito</span>
               </label>
             </div>
 
-            <button class="primary" type="submit">Guardar / Save</button>
+            <button class="primary" type="submit" data-i18n="save">Guardar</button>
           </form>
         </aside>
 
         <section class="list-panel" aria-live="polite">
           <div class="panel-title">
-            <h2>Tarjetas / Prompt cards</h2>
+            <h2 data-i18n="cardsTitle">Tarjetas</h2>
             <p id="promptCount">0 prompts</p>
           </div>
-          <p class="shortcuts">Atajos / Shortcuts: Ctrl+S guardar, Ctrl+K buscar, Ctrl+Shift+C copiar primera tarjeta.</p>
+          <p class="shortcuts" data-i18n="shortcuts">
+            Atajos: Ctrl+S guardar, Ctrl+K buscar, Ctrl+Shift+C copiar primera tarjeta.
+          </p>
           <div id="promptList" class="prompt-grid"></div>
           <div id="emptyState" class="empty" hidden>
-            <strong>No hay prompts / No prompts found.</strong>
-            <span>Ajusta filtros o agrega uno nuevo. / Adjust filters or add a new keeper.</span>
+            <strong data-i18n="emptyTitle">No hay prompts.</strong>
+            <span data-i18n="emptyHint">Ajusta filtros o agrega uno nuevo.</span>
           </div>
         </section>
       </section>
@@ -134,7 +143,7 @@
             <span class="badge"></span>
             <h3></h3>
           </div>
-          <button class="icon favorite-button" type="button" aria-label="Toggle favorite">☆</button>
+          <button class="icon favorite-button" type="button" aria-label="Toggle favorite">&#9734;</button>
         </div>
 
         <p class="body-preview"></p>
