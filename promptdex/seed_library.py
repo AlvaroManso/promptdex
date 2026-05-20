@@ -1229,4 +1229,598 @@ I want to refactor without changing behavior. Follow this checklist:
 5) If something fails, shrink the diff and isolate the cause
 Return the plan and verification commands.""",
         ),
+        PromptCreate(
+            title="PR description generator / Generador de descripcion de PR",
+            category="Productivity",
+            tags=[*shared, "pr", "github", "writing", "communication"],
+            rating=4,
+            body="""ES:
+Escribe la descripcion de este PR para que sea facil de revisar. Incluye:
+- Contexto y objetivo
+- Cambios principales (bullet points)
+- Riesgos y mitigaciones
+- Como probar (comandos)
+- Screenshots/recordings si aplica
+- Notas de rollout / backwards-compat
+
+Inputs:
+Repo: {repo}
+Issue/link: {link}
+Resumen de cambios: {changes}
+
+EN:
+Write a PR description that is easy to review. Include:
+- Context and goal
+- Key changes (bullets)
+- Risks and mitigations
+- How to test (commands)
+- Screenshots/recordings if applicable
+- Rollout/backwards-compat notes
+
+Inputs:
+Repo: {repo}
+Issue/link: {link}
+Change summary: {changes}""",
+        ),
+        PromptCreate(
+            title="Dependency upgrade plan / Plan de actualizacion de dependencias",
+            category="Debugging",
+            tags=[*shared, "deps", "upgrade", "risk", "tests"],
+            rating=4,
+            body="""ES:
+Quiero actualizar dependencias con bajo riesgo. Dado este proyecto y su lockfile, propon:
+1) Orden de actualizacion (segun riesgo/impacto)
+2) Cambios de compatibilidad probables
+3) Checklist de verificacion (lint, tests, build, smoke)
+4) Plan de rollback
+5) PRs pequenos sugeridos (1-3)
+
+Contexto del proyecto:
+{context}
+
+EN:
+I want to upgrade dependencies with low risk. Given this project and its lockfile, propose:
+1) Upgrade order (by risk/impact)
+2) Likely breaking changes
+3) Verification checklist (lint, tests, build, smoke)
+4) Rollback plan
+5) Suggested small PR slices (1-3)
+
+Project context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Observability checklist / Checklist de observabilidad",
+            category="Architecture",
+            tags=[*shared, "observability", "logging", "metrics", "tracing"],
+            rating=5,
+            body="""ES:
+Ayudame a hacer este servicio observable. Para cada endpoint/flujo, sugiere:
+- Logs (campos estructurados, niveles, ejemplos)
+- Metricas (SLIs/SLOs sugeridos)
+- Trazas (spans, atributos, propagacion)
+- Alertas (umbral + accion)
+- Dashboards (widgets clave)
+Reglas: no incluyas PII, tokens, secretos, ni payloads completos; sugiere redaccion/mascaras.
+
+Servicio/flujo:
+{service}
+
+EN:
+Help me make this service observable. For each endpoint/flow, suggest:
+- Logs (structured fields, levels, examples)
+- Metrics (suggested SLIs/SLOs)
+- Traces (spans, attributes, propagation)
+- Alerts (threshold + action)
+- Dashboards (key widgets)
+Rules: do not include PII, tokens, secrets, or full payloads; suggest redaction/masking.
+
+Service/flow:
+{service}""",
+        ),
+        PromptCreate(
+            title="Caching strategy / Estrategia de caching",
+            category="Architecture",
+            tags=[*shared, "cache", "performance", "architecture"],
+            rating=4,
+            body="""ES:
+Disena una estrategia de caching para este sistema. Incluye:
+1) Que cachear (y que NO cachear)
+2) Key design (incluye versionado)
+3) TTLs e invalidacion (eventos)
+4) Consistencia vs latencia (tradeoffs)
+5) Observabilidad (metricas de hit/miss, staleness)
+6) Riesgos (cache stampede, thundering herd) y mitigacion
+
+Contexto:
+{context}
+
+EN:
+Design a caching strategy for this system. Include:
+1) What to cache (and what NOT to cache)
+2) Cache key design (including versioning)
+3) TTLs and invalidation (events)
+4) Consistency vs latency tradeoffs
+5) Observability (hit/miss, staleness metrics)
+6) Risks (stampede/thundering herd) and mitigations
+
+Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="API rate limiting design / Diseno de rate limiting API",
+            category="Architecture",
+            tags=[*shared, "api", "rate-limit", "abuse", "security"],
+            rating=4,
+            body="""ES:
+Disena rate limiting para esta API. Necesito:
+- Limites por actor (IP, user, token) y por endpoint
+- Respuesta estandar (status, headers, body)
+- Estrategia para bursts (leaky bucket/token bucket)
+- Manejo de retries y backoff (recomendaciones al cliente)
+- Exenciones (admins, webhooks) con auditoria
+- Plan de tests (incluye casos de abuso)
+
+API:
+{api}
+
+EN:
+Design rate limiting for this API. I need:
+- Limits per actor (IP, user, token) and per endpoint
+- Standard response (status, headers, body)
+- Burst strategy (leaky bucket/token bucket)
+- Retry/backoff guidance for clients
+- Exemptions (admins, webhooks) with audit trail
+- Test plan (including abuse cases)
+
+API:
+{api}""",
+        ),
+        PromptCreate(
+            title="Error message rewrite / Reescritura de mensajes de error",
+            category="Design",
+            tags=[*shared, "ux", "errors", "copy", "accessibility"],
+            rating=4,
+            body="""ES:
+Reescribe estos mensajes de error para que sean claros, accionables y amables.
+Para cada error devuelve:
+- Mensaje corto (UI)
+- Detalle opcional (expandible)
+- Accion sugerida
+- Si es error del sistema vs del usuario
+Reglas: no culpes al usuario, evita jerga tecnica, no expongas datos sensibles, incluye variantes para lector de pantalla si aplica.
+
+Errores:
+{errors}
+
+EN:
+Rewrite these error messages to be clear, actionable, and kind.
+For each error return:
+- Short UI message
+- Optional details (expandable)
+- Suggested action
+- Whether it's user-caused vs system-caused
+Rules: don't blame the user, avoid jargon, don't expose sensitive data, include screen-reader-friendly variants when applicable.
+
+Errors:
+{errors}""",
+        ),
+        PromptCreate(
+            title="UX microcopy A/B variants / Variantes A/B de microcopy UX",
+            category="Design",
+            tags=[*shared, "ux", "microcopy", "ab-test", "writing"],
+            rating=4,
+            body="""ES:
+Genera 10 variantes de microcopy para este UI. Para cada variante:
+- Texto (max {max_chars} caracteres)
+- Tono (ej: directo, calido, tecnico)
+- Hipotesis de impacto (que mejora y por que)
+Tambien sugiere 2 metricas y un plan A/B simple.
+
+Contexto UI:
+{context}
+
+EN:
+Generate 10 microcopy variants for this UI. For each variant:
+- Text (max {max_chars} characters)
+- Tone (e.g., direct, warm, technical)
+- Impact hypothesis (what it improves and why)
+Also suggest 2 metrics and a simple A/B plan.
+
+UI context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Pair programming loop / Bucle de pair programming",
+            category="Prompts",
+            tags=[*shared, "pairing", "coding", "workflow"],
+            rating=4,
+            body="""ES:
+Vamos a programar en pareja. Reglas del flujo:
+1) Yo te doy objetivo + constraints
+2) Tu propones 2 opciones (A/B) y eliges una con razon
+3) Escribes un plan de 3-6 pasos
+4) Implementas en incrementos pequenos con checkpoints
+5) Tras cada checkpoint, me pides confirmacion o inputs faltantes
+6) Terminas con verificacion y resumen
+
+Objetivo:
+{goal}
+Constraints:
+{constraints}
+
+EN:
+Let's pair program. Workflow rules:
+1) I give you a goal + constraints
+2) You propose 2 options (A/B) and choose one with rationale
+3) You write a 3-6 step plan
+4) You implement in small increments with checkpoints
+5) After each checkpoint, ask for confirmation or missing inputs
+6) Finish with verification and a summary
+
+Goal:
+{goal}
+Constraints:
+{constraints}""",
+        ),
+        PromptCreate(
+            title="LLM eval set builder / Constructor de set de evaluacion LLM",
+            category="Research",
+            tags=[*shared, "evals", "llm", "quality", "testing"],
+            rating=5,
+            body="""ES:
+Quiero construir un set de evaluacion para esta tarea de LLM. Crea:
+1) 20-50 casos de prueba variados (incluye edge cases)
+2) Criterios de exito (rubrica con puntuacion)
+3) Casos adversariales / seguridad (sin PII)
+4) Un formato JSONL sugerido para almacenar inputs/expected
+5) Como muestrear y evitar sobreajuste
+
+Tarea:
+{task}
+
+EN:
+I want to build an evaluation set for this LLM task. Create:
+1) 20-50 diverse test cases (including edge cases)
+2) Success criteria (scored rubric)
+3) Adversarial / safety cases (no PII)
+4) A suggested JSONL format for inputs/expected
+5) Sampling guidance to avoid overfitting
+
+Task:
+{task}""",
+        ),
+        PromptCreate(
+            title="RAG chunking + retrieval plan / Plan de chunking + retrieval (RAG)",
+            category="Architecture",
+            tags=[*shared, "rag", "search", "retrieval", "architecture"],
+            rating=4,
+            body="""ES:
+Disena una estrategia RAG para este corpus. Incluye:
+- Tipos de documentos y estructura (headers, tablas, codigo)
+- Chunking (tamano, solapamiento, reglas por tipo)
+- Metadata (source, section, timestamps, permisos)
+- Indexing y recuperacion (BM25 vs embeddings, rerank)
+- Prompt de respuesta (citas a fuentes internas)
+- Plan de evaluacion (precision, coverage, hallucinations)
+Reglas: no inventes contenido; si falta informacion, pregunta.
+
+Corpus:
+{corpus}
+
+EN:
+Design a RAG strategy for this corpus. Include:
+- Document types and structure (headers, tables, code)
+- Chunking (size, overlap, per-type rules)
+- Metadata (source, section, timestamps, permissions)
+- Indexing/retrieval (BM25 vs embeddings, rerank)
+- Answer prompt (with citations to internal sources)
+- Evaluation plan (precision, coverage, hallucinations)
+Rules: do not fabricate content; ask questions when info is missing.
+
+Corpus:
+{corpus}""",
+        ),
+        PromptCreate(
+            title="Data privacy review / Revision de privacidad de datos",
+            category="Architecture",
+            tags=[*shared, "privacy", "security", "data", "compliance"],
+            rating=5,
+            body="""ES:
+Haz una revision de privacidad de este flujo de datos. Devuelve:
+1) Datos recolectados (clasificalos: PII, sensibles, no sensibles)
+2) Finalidad y minimizacion (que se puede eliminar/anonimizar)
+3) Retencion y borrado
+4) Accesos y permisos (principio de minimo privilegio)
+5) Riesgos (reidentificacion, leak, prompt injection) y mitigaciones
+6) Checklist de implementacion
+Reglas: no pidas datos reales; usa ejemplos ficticios.
+
+Flujo:
+{flow}
+
+EN:
+Do a privacy review of this data flow. Return:
+1) Data collected (classify: PII, sensitive, non-sensitive)
+2) Purpose and minimization (what can be removed/anonymized)
+3) Retention and deletion
+4) Access controls (least privilege)
+5) Risks (reidentification, leaks, prompt injection) and mitigations
+6) Implementation checklist
+Rules: don't ask for real data; use fictitious examples.
+
+Flow:
+{flow}""",
+        ),
+        PromptCreate(
+            title="Meeting agenda builder / Generador de agenda de reunion",
+            category="Productivity",
+            tags=[*shared, "meeting", "agenda", "facilitation"],
+            rating=4,
+            body="""ES:
+Crea una agenda de 30/45/60 minutos para esta reunion. Incluye:
+- Objetivo (1 frase)
+- Decisiones a tomar (max 3)
+- Bloques con tiempos y owner
+- Pre-reads
+- Resultado esperado (artefactos/tareas)
+- Preguntas para desbloquear
+
+Tema:
+{topic}
+Participantes:
+{attendees}
+
+EN:
+Create a 30/45/60-minute agenda for this meeting. Include:
+- Goal (1 sentence)
+- Decisions to make (max 3)
+- Timed blocks with owner
+- Pre-reads
+- Expected outputs (artifacts/tasks)
+- Questions to unblock progress
+
+Topic:
+{topic}
+Attendees:
+{attendees}""",
+        ),
+        PromptCreate(
+            title="Roadmap prioritization (RICE) / Priorizacion de roadmap (RICE)",
+            category="Productivity",
+            tags=[*shared, "roadmap", "prioritization", "rice", "strategy"],
+            rating=4,
+            body="""ES:
+Priorizemos este backlog usando RICE (Reach, Impact, Confidence, Effort).
+1) Propone una escala concreta para cada factor
+2) Rellena una tabla con R, I, C, E y score
+3) Explica los top 5 y por que
+4) Marca items con baja confianza y sugiere que datos faltan
+5) Sugiere el siguiente experimento para subir la confianza
+
+Backlog:
+{backlog}
+
+EN:
+Let's prioritize this backlog using RICE (Reach, Impact, Confidence, Effort).
+1) Propose a concrete scale for each factor
+2) Fill a table with R, I, C, E and the score
+3) Explain the top 5 and why
+4) Flag low-confidence items and what data is missing
+5) Suggest the next experiment to increase confidence
+
+Backlog:
+{backlog}""",
+        ),
+        PromptCreate(
+            title="Customer persona generator / Generador de personas",
+            category="Marketing",
+            tags=[*shared, "marketing", "personas", "positioning"],
+            rating=4,
+            body="""ES:
+Genera 3 personas para este producto. Para cada una incluye:
+- Contexto y objetivo
+- Trigger de compra
+- Objeciones
+- Jobs-to-be-done
+- Mensajes clave (3)
+- Canales de adquisicion probables
+Reglas: no inventes datos sensibles; usa supuestos explicitamente marcados.
+
+Producto:
+{product}
+
+EN:
+Generate 3 customer personas for this product. For each include:
+- Context and goal
+- Purchase trigger
+- Objections
+- Jobs-to-be-done
+- Key messages (3)
+- Likely acquisition channels
+Rules: don't invent sensitive details; clearly mark assumptions.
+
+Product:
+{product}""",
+        ),
+        PromptCreate(
+            title="Product announcement post / Post de anuncio de producto",
+            category="Marketing",
+            tags=[*shared, "launch", "copy", "marketing", "social"],
+            rating=4,
+            body="""ES:
+Escribe un post de anuncio para {channel} (ej: X, LinkedIn, blog). Incluye:
+- Hook en la primera linea
+- Problema -> solucion -> beneficio
+- 3 bullets con features
+- CTA claro
+- 3 variantes de tono (neutral, entusiasta, tecnico)
+Reglas: no hagas claims no verificables; si falta una metrica, deja un placeholder.
+
+Inputs:
+Producto: {product}
+Audiencia: {audience}
+Features: {features}
+
+EN:
+Write a product announcement post for {channel} (e.g., X, LinkedIn, blog). Include:
+- First-line hook
+- Problem -> solution -> benefit
+- 3 feature bullets
+- Clear CTA
+- 3 tone variants (neutral, excited, technical)
+Rules: avoid unverifiable claims; if a metric is missing, use a placeholder.
+
+Inputs:
+Product: {product}
+Audience: {audience}
+Features: {features}""",
+        ),
+        PromptCreate(
+            title="Claude tool-use planner / Planificador de tool-use (Claude)",
+            category="Prompts for Claude",
+            tags=[*shared, "claude", "tools", "planning", "agents"],
+            rating=4,
+            body="""ES:
+Eres un agente que puede usar herramientas. Antes de actuar:
+1) Lista objetivos y criterios de exito
+2) Enumera herramientas disponibles y que aporta cada una
+3) Propone un plan con pasos pequenos y puntos de verificacion
+4) Si falta informacion, pregunta antes de ejecutar acciones irreversibles
+5) Al final, entrega resumen + siguientes pasos
+
+Tarea:
+{task}
+
+EN:
+You are an agent that can use tools. Before acting:
+1) List goals and success criteria
+2) Enumerate available tools and what each provides
+3) Propose a plan with small steps and verification checkpoints
+4) If info is missing, ask before irreversible actions
+5) At the end, deliver a summary + next steps
+
+Task:
+{task}""",
+        ),
+        PromptCreate(
+            title="Codex repo cleanup task / Tarea de limpieza de repo (Codex)",
+            category="Prompts for Codex",
+            tags=[*shared, "codex", "cleanup", "maintenance", "repo"],
+            rating=4,
+            body="""ES:
+Limpia este repo sin cambios funcionales. Reglas:
+- No cambies comportamiento
+- No toques dependencias salvo que sea necesario
+- Cambios pequenos y faciles de revisar
+Checklist:
+1) Elimina codigo muerto y archivos obsoletos (si se confirma)
+2) Ordena imports / formatea segun el formatter del repo
+3) Arregla warnings triviales del linter
+4) Actualiza docs menores (si estan desincronizadas)
+5) Ejecuta checks y tests y reporta resultados
+Devuelve el diff planificado antes de aplicar cambios grandes.
+
+EN:
+Clean up this repo with no functional changes. Rules:
+- Don't change behavior
+- Don't touch dependencies unless necessary
+- Keep changes small and reviewable
+Checklist:
+1) Remove dead code/obsolete files (when confirmed)
+2) Sort imports / format with the repo formatter
+3) Fix trivial linter warnings
+4) Update small docs if out of sync
+5) Run checks/tests and report results
+Return a planned diff before applying large changes.""",
+        ),
+        PromptCreate(
+            title="System prompt red-team / Red-team de system prompt",
+            category="Prompts",
+            tags=[*shared, "security", "prompting", "redteam"],
+            rating=5,
+            body="""ES:
+Quiero hacer red-team de este system prompt. Genera:
+1) 15 ataques (jailbreaks, inyeccion, data exfiltration) en distintos estilos
+2) Para cada ataque: objetivo, por que podria funcionar, severidad
+3) Mejoras al prompt para mitigarlo (sin hacerlo demasiado largo)
+4) Un set minimo de tests automatizables
+Reglas: no incluyas datos reales, secretos, ni instrucciones ilegales; enfocate en seguridad defensiva.
+
+System prompt:
+{prompt}
+
+EN:
+I want to red-team this system prompt. Generate:
+1) 15 attacks (jailbreaks, injection, data exfiltration) in different styles
+2) For each: goal, why it might work, severity
+3) Prompt improvements to mitigate (without making it too long)
+4) A minimal set of automatable tests
+Rules: no real data, no secrets, no illegal instructions; focus on defensive security.
+
+System prompt:
+{prompt}""",
+        ),
+        PromptCreate(
+            title="Incident postmortem template / Plantilla de postmortem",
+            category="Productivity",
+            tags=[*shared, "incident", "postmortem", "reliability"],
+            rating=4,
+            body="""ES:
+Rellena un postmortem sin culpas para este incidente. Estructura:
+- Resumen (1 parrafo)
+- Impacto (quien, cuanto, cuanto tiempo)
+- Timeline (timestamps)
+- Causa raiz (5 whys)
+- Que funciono / que no
+- Acciones (owner, prioridad, fecha)
+- Deteccion y alertas (que faltaba)
+Reglas: no incluyas datos personales; anonimiza nombres.
+
+Incidente:
+{incident}
+
+EN:
+Fill a blameless postmortem for this incident. Structure:
+- Summary (1 paragraph)
+- Impact (who, how much, for how long)
+- Timeline (timestamps)
+- Root cause (5 whys)
+- What went well / what didn't
+- Action items (owner, priority, due date)
+- Detection/alerts (what was missing)
+Rules: no personal data; anonymize names.
+
+Incident:
+{incident}""",
+        ),
+        PromptCreate(
+            title="Codex test-first bugfix / Bugfix test-first (Codex)",
+            category="Prompts for Codex",
+            tags=[*shared, "codex", "tdd", "bugfix", "tests"],
+            rating=5,
+            body="""ES:
+Arregla este bug con enfoque test-first:
+1) Escribe un test que falle (repro minimo)
+2) Ejecuta tests para confirmar el fallo
+3) Implementa el fix mas pequeno que pase
+4) Refactoriza si hace falta
+5) Ejecuta lint/format/tests y reporta output
+Reglas: no cambies APIs publicas salvo que lo justifiques; prioriza causa raiz.
+
+Bug:
+{bug}
+
+EN:
+Fix this bug with a test-first approach:
+1) Write a failing test (minimal repro)
+2) Run tests to confirm failure
+3) Implement the smallest fix that passes
+4) Refactor if needed
+5) Run lint/format/tests and report output
+Rules: don't change public APIs unless justified; prioritize root cause.
+
+Bug:
+{bug}""",
+        ),
     ]
