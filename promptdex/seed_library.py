@@ -1823,4 +1823,648 @@ Rules: don't change public APIs unless justified; prioritize root cause.
 Bug:
 {bug}""",
         ),
+        PromptCreate(
+            title="Code review with risk matrix / Code review con matriz de riesgo",
+            category="Coding",
+            tags=[*shared, "code-review", "risk", "quality", "checklist"],
+            rating=5,
+            body="""ES:
+Haz una revision de codigo con foco en riesgos. Entrega:
+1) Resumen de cambios (3-6 bullets)
+2) Matriz de riesgo: (Severidad x Probabilidad) para cada hallazgo
+3) Hallazgos por categoria: Correctitud, Seguridad, Rendimiento, DX, Mantenibilidad
+4) Recomendaciones concretas con snippets cortos (si aplica)
+5) Preguntas de aclaracion (si faltan requisitos)
+Reglas: no inventes contexto; cita lineas/archivos cuando se proporcionen.
+
+Codigo / diff:
+{diff}
+
+EN:
+Do a code review focused on risk. Provide:
+1) Change summary (3–6 bullets)
+2) Risk matrix: (Severity x Likelihood) per finding
+3) Findings by category: Correctness, Security, Performance, DX, Maintainability
+4) Concrete recommendations with short snippets (if applicable)
+5) Clarifying questions (if requirements are missing)
+Rules: don't invent context; reference lines/files when provided.
+
+Code / diff:
+{diff}""",
+        ),
+        PromptCreate(
+            title="Minimal reproducible example builder / Constructor de ejemplo minimo reproducible",
+            category="Debugging",
+            tags=[*shared, "debugging", "mre", "repro", "triage"],
+            rating=5,
+            body="""ES:
+Ayudame a crear un ejemplo minimo reproducible (MRE) para este bug. Proceso:
+1) Reescribe el bug como: entrada -> pasos -> salida observada -> salida esperada
+2) Identifica dependencias y elimina todo lo no esencial
+3) Propone el MRE en un unico archivo (o el minimo numero posible)
+4) Incluye comandos para ejecutar y verificar
+5) Enumera 3 hipotesis de causa raiz y como confirmarlas con logs/asserts
+Reglas: no incluyas datos reales; usa placeholders.
+
+Descripcion del bug:
+{bug}
+
+Contexto (opcional):
+{context}
+
+EN:
+Help me build a minimal reproducible example (MRE) for this bug. Process:
+1) Rewrite as: input -> steps -> observed output -> expected output
+2) Identify dependencies and remove anything non-essential
+3) Propose the MRE as a single file (or the minimum possible)
+4) Include commands to run and verify
+5) List 3 root-cause hypotheses and how to confirm with logs/asserts
+Rules: no real data; use placeholders.
+
+Bug description:
+{bug}
+
+Context (optional):
+{context}""",
+        ),
+        PromptCreate(
+            title="API pagination design / Diseno de paginacion API",
+            category="Architecture",
+            tags=[*shared, "api", "pagination", "design", "backend"],
+            rating=4,
+            body="""ES:
+Disena paginacion para este endpoint. Entrega:
+- Opcion A: offset/limit (pros/contras, limites)
+- Opcion B: cursor-based (formato de cursor, orden estable, consistencia)
+- Contrato API: request/response JSON + ejemplos
+- Consideraciones: filtros, sorting, total counts, caching, rate limits
+- Estrategia de migracion si ya existe un esquema previo
+Reglas: prioriza simplicidad y compatibilidad hacia atras.
+
+Endpoint:
+{endpoint}
+
+Modelo de datos (opcional):
+{schema}
+
+EN:
+Design pagination for this endpoint. Provide:
+- Option A: offset/limit (pros/cons, limits)
+- Option B: cursor-based (cursor format, stable ordering, consistency)
+- API contract: request/response JSON + examples
+- Considerations: filters, sorting, total counts, caching, rate limits
+- Migration strategy if an older scheme exists
+Rules: prioritize simplicity and backward compatibility.
+
+Endpoint:
+{endpoint}
+
+Data model (optional):
+{schema}""",
+        ),
+        PromptCreate(
+            title="Database migration safety plan / Plan seguro de migraciones de BD",
+            category="Architecture",
+            tags=[*shared, "database", "migrations", "reliability", "rollback"],
+            rating=5,
+            body="""ES:
+Propone un plan seguro para esta migracion de base de datos. Incluye:
+1) Cambios de esquema (DDL) y su impacto
+2) Plan en fases (expand/contract) si hay cambios breaking
+3) Backfill: estrategia, batches, idempotencia, reintentos
+4) Rollout: flags, despliegue, compatibilidad de versiones
+5) Rollback: que se puede revertir y que no
+6) Verificaciones: queries de salud y validaciones de datos
+Reglas: evita downtime cuando sea posible; explica tradeoffs.
+
+Migracion:
+{migration}
+
+Stack (opcional):
+{stack}
+
+EN:
+Propose a safe plan for this database migration. Include:
+1) Schema changes (DDL) and impact
+2) Phased plan (expand/contract) for breaking changes
+3) Backfill: strategy, batching, idempotency, retries
+4) Rollout: flags, deployment, version compatibility
+5) Rollback: what can/can't be reverted
+6) Verification: health queries and data validations
+Rules: avoid downtime when possible; explain tradeoffs.
+
+Migration:
+{migration}
+
+Stack (optional):
+{stack}""",
+        ),
+        PromptCreate(
+            title="UI accessibility audit / Auditoria de accesibilidad UI",
+            category="Design",
+            tags=[*shared, "a11y", "accessibility", "ux", "design"],
+            rating=5,
+            body="""ES:
+Audita la accesibilidad de esta UI y propone mejoras. Entrega:
+1) Problemas detectados (prioridad Alta/Media/Baja)
+2) Recomendaciones: texto alternativo, labels, foco, contraste, semantica
+3) Checklist de pruebas manuales (teclado, screen reader)
+4) Cambios sugeridos en HTML/CSS (snippets cortos)
+Reglas: asume WCAG como referencia general, pero no cites numeros exactos si no se proveen.
+
+UI (descripcion, markup o captura):
+{ui}
+
+EN:
+Audit this UI for accessibility and propose improvements. Provide:
+1) Issues found (High/Medium/Low priority)
+2) Recommendations: alt text, labels, focus, contrast, semantics
+3) Manual testing checklist (keyboard, screen reader)
+4) Suggested HTML/CSS changes (short snippets)
+Rules: use WCAG as general guidance, but don't cite exact clause numbers unless provided.
+
+UI (description, markup, or screenshot):
+{ui}""",
+        ),
+        PromptCreate(
+            title="Design critique rubric / Rubrica de critica de diseno",
+            category="Design",
+            tags=[*shared, "design", "critique", "ui", "rubric"],
+            rating=4,
+            body="""ES:
+Critica este diseno usando una rubrica consistente. Evalua (0-5) y justifica:
+- Claridad (jerarquia, escaneabilidad)
+- Consistencia (espaciados, tipografia, patrones)
+- Accion (CTA, affordances)
+- Accesibilidad (contraste, foco, texto)
+- Confianza (errores, estados vacios, feedback)
+Termina con: 3 quick wins y 2 apuestas grandes.
+
+Diseno:
+{design}
+
+EN:
+Critique this design using a consistent rubric. Score (0–5) and justify:
+- Clarity (hierarchy, scannability)
+- Consistency (spacing, typography, patterns)
+- Action (CTA, affordances)
+- Accessibility (contrast, focus, text)
+- Trust (errors, empty states, feedback)
+End with: 3 quick wins and 2 big bets.
+
+Design:
+{design}""",
+        ),
+        PromptCreate(
+            title="Landing page value prop / Propuesta de valor para landing",
+            category="Marketing",
+            tags=[*shared, "marketing", "copy", "landing", "positioning"],
+            rating=5,
+            body="""ES:
+Escribe copy para una landing page con enfoque en conversion. Entrega:
+1) 5 opciones de titular + subtitulo
+2) Seccion \"Como funciona\" (3 pasos)
+3) Beneficios (no features) en bullets
+4) Objeciones comunes + respuestas (FAQ)
+5) 2 CTAs con microcopy
+Tono:
+{tone}
+
+Producto:
+{product}
+
+Audiencia:
+{audience}
+
+EN:
+Write landing page copy focused on conversion. Provide:
+1) 5 headline + subheadline options
+2) \"How it works\" section (3 steps)
+3) Benefits (not features) as bullets
+4) Common objections + answers (FAQ)
+5) 2 CTAs with microcopy
+Tone:
+{tone}
+
+Product:
+{product}
+
+Audience:
+{audience}""",
+        ),
+        PromptCreate(
+            title="SEO brief generator / Generador de brief SEO",
+            category="Marketing",
+            tags=[*shared, "seo", "content", "marketing", "brief"],
+            rating=4,
+            body="""ES:
+Genera un brief SEO para este tema. Incluye:
+- Intento de busqueda y audiencia
+- Outline con H2/H3
+- Lista de preguntas (People Also Ask style) sin inventar datos
+- Tono, longitud objetivo y estructura de introduccion
+- \"Do / Don't\" (claims, compliance, estilo)
+- 10 keywords relacionadas (sin volumen; solo semantica)
+Reglas: no inventes estadisticas; marca claramente lo que requiera fuentes.
+
+Tema:
+{topic}
+
+EN:
+Generate an SEO brief for this topic. Include:
+- Search intent and audience
+- Outline with H2/H3
+- Question list (People Also Ask style) without making up facts
+- Tone, target length, and intro structure
+- Do/Don't (claims, compliance, style)
+- 10 related keywords (no volume; semantic only)
+Rules: don't invent statistics; clearly mark anything that needs sources.
+
+Topic:
+{topic}""",
+        ),
+        PromptCreate(
+            title="Weekly execution plan / Plan semanal de ejecucion",
+            category="Productivity",
+            tags=[*shared, "planning", "weekly", "prioritization", "execution"],
+            rating=4,
+            body="""ES:
+Convierte estos objetivos en un plan semanal ejecutable. Entrega:
+1) 3 prioridades maximas (con razon)
+2) Backlog ordenado (Must/Should/Could)
+3) Plan dia a dia (bloques de 60-120 min)
+4) Riesgos y mitigaciones
+5) Definicion de \"done\" y checkpoints
+Reglas: asume capacidad realista; incluye tiempo para imprevistos.
+
+Objetivos:
+{goals}
+
+Restricciones (opcional):
+{constraints}
+
+EN:
+Turn these goals into an executable weekly plan. Provide:
+1) Top 3 priorities (with rationale)
+2) Ordered backlog (Must/Should/Could)
+3) Day-by-day plan (60–120 min blocks)
+4) Risks and mitigations
+5) Definition of done and checkpoints
+Rules: assume realistic capacity; include buffer time.
+
+Goals:
+{goals}
+
+Constraints (optional):
+{constraints}""",
+        ),
+        PromptCreate(
+            title="Decision log entry (ADR) / Entrada de log de decision (ADR)",
+            category="Architecture",
+            tags=[*shared, "adr", "decision", "architecture", "docs"],
+            rating=5,
+            body="""ES:
+Escribe una ADR corta para esta decision. Formato:
+- Contexto
+- Decision
+- Alternativas consideradas (pros/contras)
+- Consecuencias (positivas/negativas)
+- Migracion / rollout (si aplica)
+- Como se medira el exito
+Reglas: se concreto; evita jerga; no inventes requisitos.
+
+Decision:
+{decision}
+
+Opciones:
+{options}
+
+EN:
+Write a short ADR for this decision. Format:
+- Context
+- Decision
+- Alternatives considered (pros/cons)
+- Consequences (positive/negative)
+- Migration / rollout (if applicable)
+- How success will be measured
+Rules: be concrete; avoid jargon; don't invent requirements.
+
+Decision:
+{decision}
+
+Options:
+{options}""",
+        ),
+        PromptCreate(
+            title="Literature review synthesis / Sintesis de revision bibliografica",
+            category="Research",
+            tags=[*shared, "research", "literature", "synthesis", "notes"],
+            rating=4,
+            body="""ES:
+Sintetiza estas notas/papers en una revision bibliografica clara. Entrega:
+1) Resumen ejecutivo (5 bullets)
+2) Taxonomia de ideas (agrupa por tema)
+3) Consensos vs desacuerdos
+4) Limitaciones y sesgos
+5) Preguntas abiertas y proximos experimentos
+Reglas: no atribuyas claims si no hay fuente; marca citas como [autor, anio] si se provee.
+
+Material:
+{material}
+
+EN:
+Synthesize these notes/papers into a clear literature review. Provide:
+1) Executive summary (5 bullets)
+2) Idea taxonomy (group by theme)
+3) Consensus vs disagreements
+4) Limitations and biases
+5) Open questions and next experiments
+Rules: don't attribute claims without a source; mark citations as [author, year] when provided.
+
+Material:
+{material}""",
+        ),
+        PromptCreate(
+            title="Experiment design (A/B test) / Diseno de experimento (A/B)",
+            category="Research",
+            tags=[*shared, "experiment", "ab-test", "metrics", "product"],
+            rating=5,
+            body="""ES:
+Disena un experimento A/B para esta hipotesis. Incluye:
+- Hipotesis clara (si/entonces/porque)
+- Variable primaria y metricas secundarias (con definicion)
+- Poblacion, segmentacion y criterios de exclusion
+- Duracion estimada y riesgos (peeking, sesgos)
+- Instrumentacion: eventos y propiedades
+- Criterios de parada y decision
+Reglas: no inventes numeros; deja placeholders si faltan supuestos.
+
+Hipotesis:
+{hypothesis}
+
+Contexto:
+{context}
+
+EN:
+Design an A/B test for this hypothesis. Include:
+- Clear hypothesis (if/then/because)
+- Primary metric and secondary metrics (with definitions)
+- Population, segmentation, and exclusion criteria
+- Estimated duration and risks (peeking, biases)
+- Instrumentation: events and properties
+- Stop criteria and decision rule
+Rules: don't make up numbers; use placeholders when assumptions are missing.
+
+Hypothesis:
+{hypothesis}
+
+Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Agent sandbox safety prompt / Prompt de seguridad para agente",
+            category="Agents",
+            tags=[*shared, "agents", "safety", "privacy", "tool-use"],
+            rating=5,
+            body="""ES:
+Eres un agente que puede usar herramientas. Politica de seguridad:
+- No pegues secretos (tokens, keys, cookies). Si aparecen, redáctalos.
+- No ejecutes acciones destructivas sin confirmacion explicita.
+- Minimiza acceso a datos: lee solo lo necesario.
+- Prefiere cambios pequenos y reversibles.
+Antes de cada accion con herramientas: explica proposito, riesgo, y como verificar.
+Al final: lista de comandos ejecutados + cambios aplicados.
+
+Tarea:
+{task}
+
+EN:
+You are a tool-using agent. Safety policy:
+- Never paste secrets (tokens, keys, cookies). If they appear, redact them.
+- Don't run destructive actions without explicit confirmation.
+- Minimize data access: read only what's needed.
+- Prefer small, reversible changes.
+Before each tool action: explain purpose, risk, and how to verify.
+At the end: list commands run + changes applied.
+
+Task:
+{task}""",
+        ),
+        PromptCreate(
+            title="Tool-use trace reporter / Reporte de trazas de tool-use",
+            category="Agents",
+            tags=[*shared, "agents", "tools", "trace", "observability"],
+            rating=4,
+            body="""ES:
+Quiero registrar un trace de tu uso de herramientas para esta tarea. Tras cada paso, añade:
+- Accion (tool, comando)
+- Entrada (parametros resumidos)
+- Salida (resumen + errores)
+- Decision: por que el siguiente paso
+- Evidencia: como sabes que vas bien
+Mantente conciso; no repitas logs largos; enlaza archivos si aplica.
+
+Tarea:
+{task}
+
+EN:
+I want a trace of your tool usage for this task. After each step, add:
+- Action (tool, command)
+- Input (summarized parameters)
+- Output (summary + errors)
+- Decision: why the next step
+- Evidence: how you know you're on track
+Be concise; don't paste long logs; link files when applicable.
+
+Task:
+{task}""",
+        ),
+        PromptCreate(
+            title="ChatGPT brainstorming facilitator / Facilitador de brainstorming (ChatGPT)",
+            category="Prompts for ChatGPT",
+            tags=[*shared, "chatgpt", "brainstorming", "ideation", "facilitation"],
+            rating=4,
+            body="""ES:
+Actua como facilitador de brainstorming. Objetivo: generar opciones sin perder foco. Reglas:
+1) Empieza con 5 preguntas para acotar
+2) Genera 12 ideas agrupadas por 3 enfoques distintos
+3) Para cada idea: impacto, esfuerzo, riesgos
+4) Elige 3 y propon un mini-plan (primeros 3 pasos)
+5) Termina con un resumen de decision y siguientes preguntas
+
+Tema:
+{topic}
+
+EN:
+Act as a brainstorming facilitator. Goal: generate options without losing focus. Rules:
+1) Start with 5 scoping questions
+2) Generate 12 ideas grouped into 3 distinct approaches
+3) For each idea: impact, effort, risks
+4) Pick 3 and propose a mini-plan (first 3 steps)
+5) End with a decision summary and next questions
+
+Topic:
+{topic}""",
+        ),
+        PromptCreate(
+            title="Claude writing style adapter / Adaptador de estilo de escritura (Claude)",
+            category="Prompts for Claude",
+            tags=[*shared, "claude", "writing", "style", "editing"],
+            rating=4,
+            body="""ES:
+Reescribe este texto manteniendo el significado, pero adaptando estilo y claridad. Entrega:
+1) Version final (lista para pegar)
+2) Cambios clave (3-6 bullets)
+3) Opciones alternativas para el primer parrafo (3 variantes)
+Reglas: no agregues hechos nuevos; preserva numeros y nombres propios.
+
+Estilo objetivo:
+{style}
+
+Texto:
+{text}
+
+EN:
+Rewrite this text to keep the meaning but improve style and clarity. Provide:
+1) Final version (ready to paste)
+2) Key changes (3–6 bullets)
+3) Alternative options for the first paragraph (3 variants)
+Rules: don't add new facts; preserve numbers and proper nouns.
+
+Target style:
+{style}
+
+Text:
+{text}""",
+        ),
+        PromptCreate(
+            title="Codex PR fix-up / Fix-up de PR (Codex)",
+            category="Prompts for Codex",
+            tags=[*shared, "codex", "pr", "review", "polish"],
+            rating=5,
+            body="""ES:
+Mejora este PR para que sea facil de revisar. Checklist:
+1) Divide commits si hay cambios no relacionados (sin reescribir historia si ya esta compartida)
+2) Reduce ruido: formateo solo donde toque, elimina cambios accidentales
+3) Asegura nombres claros y mensajes de error utiles
+4) Actualiza tests y docs si estan afectados
+5) Entrega una descripcion de PR: contexto, cambios, como probar, riesgos
+Al final: comandos recomendados para verificar.
+
+PR / diff:
+{diff}
+
+EN:
+Improve this PR to make it easy to review. Checklist:
+1) Split commits if there are unrelated changes (don't rewrite history if already shared)
+2) Reduce noise: format only touched areas, remove accidental changes
+3) Ensure clear naming and helpful error messages
+4) Update tests and docs if impacted
+5) Produce a PR description: context, changes, how to test, risks
+At the end: recommended verification commands.
+
+PR / diff:
+{diff}""",
+        ),
+        PromptCreate(
+            title="Prompt pack curator / Curador de packs de prompts",
+            category="Prompts",
+            tags=[*shared, "prompting", "library", "curation", "quality"],
+            rating=5,
+            body="""ES:
+Ayudame a curar un pack de prompts para un equipo. Entrada: lista de prompts y el publico objetivo.
+Entrega:
+1) Taxonomia (categorias y subcategorias)
+2) Duplicados/solapamientos (que quitar o fusionar)
+3) Estandares de calidad: formato, placeholders, guardrails, longitud
+4) 10 prompts recomendados \"core\" y por que
+5) Guia rapida de uso (cuando usar cada categoria)
+Reglas: no incluyas datos privados; prioriza prompts reutilizables.
+
+Publico objetivo:
+{audience}
+
+Prompts:
+{prompts}
+
+EN:
+Help me curate a prompt pack for a team. Input: a prompt list and the target audience.
+Provide:
+1) Taxonomy (categories and subcategories)
+2) Duplicates/overlaps (what to remove or merge)
+3) Quality standards: format, placeholders, guardrails, length
+4) 10 recommended core prompts and why
+5) Quick usage guide (when to use each category)
+Rules: no private data; prioritize reusable prompts.
+
+Target audience:
+{audience}
+
+Prompts:
+{prompts}""",
+        ),
+        PromptCreate(
+            title="PII redaction plan / Plan de redaccion de PII",
+            category="Research",
+            tags=[*shared, "privacy", "pii", "redaction", "compliance"],
+            rating=5,
+            body="""ES:
+Necesito anonimizar/redactar datos personales (PII) de este material. Entrega:
+1) Tipos de PII presentes (nombres, emails, IDs, ubicaciones, etc.)
+2) Estrategia de redaccion: reemplazos consistentes, hashing, seudonimos
+3) Reglas para conservar utilidad (fechas relativas, rangos, categorias)
+4) Ejemplos de antes/despues con placeholders (no datos reales)
+5) Checklist de verificacion y errores comunes
+Reglas: no reconstruyas identidades; si hay dudas, redáctalo.
+
+Material:
+{material}
+
+EN:
+I need to anonymize/redact personal data (PII) from this material. Provide:
+1) Types of PII present (names, emails, IDs, locations, etc.)
+2) Redaction strategy: consistent replacements, hashing, pseudonyms
+3) Rules to preserve utility (relative dates, ranges, categories)
+4) Before/after examples using placeholders (no real data)
+5) Verification checklist and common mistakes
+Rules: never try to re-identify people; when in doubt, redact.
+
+Material:
+{material}""",
+        ),
+        PromptCreate(
+            title="Incident runbook quickstart / Quickstart de runbook de incidentes",
+            category="Productivity",
+            tags=[*shared, "incident", "runbook", "ops", "reliability"],
+            rating=4,
+            body="""ES:
+Crea un runbook practico para este tipo de incidente. Incluye:
+- Senales / sintomas
+- Diagnostico rapido (5-10 checks con comandos genericos)
+- Mitigaciones seguras (ordenadas por menor riesgo)
+- Escalado y comunicacion (plantillas cortas)
+- Post-incidente: datos a capturar y acciones
+Reglas: no incluyas credenciales ni comandos destructivos por defecto; marca lo peligroso.
+
+Tipo de incidente:
+{incident_type}
+
+Sistema (opcional):
+{system}
+
+EN:
+Create a practical runbook for this incident type. Include:
+- Signals / symptoms
+- Quick diagnosis (5–10 checks with generic commands)
+- Safe mitigations (ordered by lowest risk first)
+- Escalation and comms (short templates)
+- Post-incident: data to capture and action items
+Rules: no credentials and no destructive commands by default; clearly flag risky steps.
+
+Incident type:
+{incident_type}
+
+System (optional):
+{system}""",
+        ),
     ]
