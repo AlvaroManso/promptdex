@@ -2929,7 +2929,7 @@ Context:
 {context}""",
         ),
         PromptCreate(
-            title="Error message rewrite / Reescritura de mensajes de error",
+            title="Error message audit table / Tabla de auditoria de mensajes de error",
             category="Design",
             tags=[*shared, "ux", "errors", "copy", "accessibility"],
             rating=4,
@@ -3670,5 +3670,585 @@ Rules: avoid duplicates; standardize placeholders; prioritize safety and privacy
 
 Prompts:
 {prompts}""",
+        ),
+        PromptCreate(
+            title="Prompt template normalizer / Normalizador de plantilla de prompt",
+            category="Prompts for Codex",
+            tags=[*shared, "prompting", "templates", "placeholders", "style", "consistency"],
+            rating=5,
+            body="""ES:
+Normaliza este prompt para que sea reutilizable en una libreria publica. Entrega:
+1) Version final (bilingue ES/EN si aplica)
+2) Placeholders estandarizados (ej: {context}, {input}, {constraints})
+3) Reglas claras (que hacer / que NO hacer)
+4) Formato de salida exacto (lista, tabla, JSON, etc.)
+5) Mini checklist de privacidad (datos a redactar)
+Reglas: evita pedir chain-of-thought; pide pasos verificables.
+
+Prompt original:
+{prompt}
+
+EN:
+Normalize this prompt so it is reusable in a public library. Deliver:
+1) Final version (bilingual ES/EN if applicable)
+2) Standardized placeholders (e.g., {context}, {input}, {constraints})
+3) Clear rules (do / do NOT)
+4) Exact output format (bullets, table, JSON, etc.)
+5) Mini privacy checklist (what to redact)
+Rules: avoid asking for chain-of-thought; ask for verifiable steps.
+
+Original prompt:
+{prompt}""",
+        ),
+        PromptCreate(
+            title="Prompt parameter audit / Auditoria de parametros del prompt",
+            category="Prompts for Codex",
+            tags=[*shared, "prompting", "inputs", "constraints", "quality", "debugging"],
+            rating=4,
+            body="""ES:
+Audita este prompt como si fuera una funcion. Identifica:
+1) Entradas necesarias vs opcionales (con tipos y ejemplo)
+2) Suposiciones implicitas y como hacerlas explicitas
+3) Restricciones que faltan (seguridad, formato, alcance)
+4) Salida esperada (esquema) y criterios de exito
+5) Test cases: 3 ejemplos de input y output esperado (breve)
+
+Prompt:
+{prompt}
+
+EN:
+Audit this prompt as if it were a function. Identify:
+1) Required vs optional inputs (with types and examples)
+2) Implicit assumptions and how to make them explicit
+3) Missing constraints (safety, format, scope)
+4) Expected output (schema) and success criteria
+5) Test cases: 3 input examples and expected output (brief)
+
+Prompt:
+{prompt}""",
+        ),
+        PromptCreate(
+            title="Structured brainstorming with constraints / Brainstorming estructurado con restricciones",
+            category="Productivity",
+            tags=[*shared, "brainstorming", "constraints", "ideas", "planning"],
+            rating=4,
+            body="""ES:
+Genera ideas de calidad bajo restricciones. Sigue este formato:
+1) Reformula el objetivo en 1 frase
+2) Lista restricciones (duras vs blandas)
+3) 10 ideas (cada una: titulo + 2 frases + por que encaja)
+4) Top 3 recomendadas con tradeoffs
+5) Primer experimento pequeno para validar cada una
+
+Contexto:
+{context}
+
+Restricciones:
+{constraints}
+
+EN:
+Generate high-quality ideas under constraints. Follow this format:
+1) Restate the goal in 1 sentence
+2) List constraints (hard vs soft)
+3) 10 ideas (each: title + 2 sentences + why it fits)
+4) Top 3 recommendations with tradeoffs
+5) First small experiment to validate each
+
+Context:
+{context}
+
+Constraints:
+{constraints}""",
+        ),
+        PromptCreate(
+            title="Decision matrix builder / Constructor de matriz de decision",
+            category="Productivity",
+            tags=[*shared, "decisions", "tradeoffs", "prioritization", "framework"],
+            rating=5,
+            body="""ES:
+Crea una matriz de decision para elegir entre estas opciones. Entrega:
+1) Criterios (5-9) con definicion y peso (0-5)
+2) Tabla de puntuacion por opcion (0-5) con justificacion breve
+3) Resultado total y recomendacion
+4) Sensibilidad: que pasaria si el criterio #1 pesa menos?
+5) Riesgos y plan de mitigacion para la opcion ganadora
+
+Opciones:
+{options}
+
+Contexto:
+{context}
+
+EN:
+Build a decision matrix to choose among these options. Deliver:
+1) Criteria (5-9) with definition and weight (0-5)
+2) Scoring table per option (0-5) with brief justification
+3) Total result and recommendation
+4) Sensitivity: what if criterion #1 matters less?
+5) Risks and mitigation plan for the winning option
+
+Options:
+{options}
+
+Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="API error playbook / Playbook de errores API",
+            category="Architecture",
+            tags=[*shared, "api", "errors", "http", "contracts", "debugging"],
+            rating=5,
+            body="""ES:
+Disena un playbook de errores para esta API. Incluye:
+1) Taxonomia (validacion, auth, permisos, not-found, conflicto, rate-limit, server)
+2) Mapeo a codigos HTTP y estructura JSON de error
+3) Mensajes orientados a accion (para usuario y para dev)
+4) Correlation/request id y como exponerlo
+5) Ejemplos: 6 errores tipicos (request + response)
+Reglas: no filtres detalles sensibles; evita mensajes ambiguos.
+
+API/Contexto:
+{context}
+
+EN:
+Design an API error playbook. Include:
+1) Taxonomy (validation, auth, permissions, not-found, conflict, rate-limit, server)
+2) Mapping to HTTP codes and JSON error shape
+3) Actionable messages (for end users and for devs)
+4) Correlation/request id and how to expose it
+5) Examples: 6 typical errors (request + response)
+Rules: do not leak sensitive details; avoid ambiguous messages.
+
+API/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Logging strategy for local apps / Estrategia de logging para apps locales",
+            category="Architecture",
+            tags=[*shared, "logging", "local-first", "privacy", "debugging", "ops"],
+            rating=4,
+            body="""ES:
+Propone una estrategia de logging para una app local-first. Define:
+1) Objetivos (debug, soporte, auditoria) y lo que NO se debe loggear
+2) Niveles y convenciones (info/warn/error, eventos, contexto)
+3) Campos recomendados (timestamp, request_id, modulo, accion)
+4) Rotacion/retencion local y limites de tamano
+5) Como permitir exportar logs de forma segura (redaccion)
+Devuelve un ejemplo de 5 lineas de log.
+
+Contexto:
+{context}
+
+EN:
+Propose a logging strategy for a local-first app. Define:
+1) Goals (debug, support, audit) and what must NOT be logged
+2) Levels and conventions (info/warn/error, events, context)
+3) Recommended fields (timestamp, request_id, module, action)
+4) Local rotation/retention and size limits
+5) How to safely export logs (redaction)
+Return a 5-line log example.
+
+Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Dependency diet review / Revision de dieta de dependencias",
+            category="Architecture",
+            tags=[*shared, "dependencies", "minimalism", "security", "maintenance"],
+            rating=5,
+            body="""ES:
+Revisa estas dependencias con mentalidad dependency-light. Entrega:
+1) Dependencias criticas vs prescindibles
+2) Riesgos (supply chain, licencias, mantenimiento, tamano)
+3) Alternativas: stdlib, small libs, o codigo propio (si es razonable)
+4) Plan de reduccion en 3 pasos con verificacion
+5) Reglas para futuras dependencias (criteria de aceptacion)
+
+Dependencias/Contexto:
+{context}
+
+EN:
+Review these dependencies with a dependency-light mindset. Deliver:
+1) Critical vs optional dependencies
+2) Risks (supply chain, licenses, maintenance, size)
+3) Alternatives: stdlib, smaller libs, or custom code (when reasonable)
+4) 3-step reduction plan with verification
+5) Rules for future dependencies (acceptance criteria)
+
+Dependencies/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Offline-first sync design / Diseno de sincronizacion offline-first",
+            category="Architecture",
+            tags=[*shared, "offline-first", "sync", "conflicts", "data", "ux"],
+            rating=5,
+            body="""ES:
+Disena una sincronizacion offline-first opcional. Incluye:
+1) Modelo de datos y versionado
+2) Estrategia de conflictos (last-write-wins, merge, CRDT, manual) y por que
+3) Flujo UX para conflictos y estados (offline, syncing, error)
+4) Seguridad: cifrado, autenticacion, y minimizacion de datos
+5) Pruebas y simulaciones (latencia, duplicados, cortes)
+Mantener la app util sin sync es un requisito.
+
+Contexto:
+{context}
+
+EN:
+Design an optional offline-first sync. Include:
+1) Data model and versioning
+2) Conflict strategy (LWW, merge, CRDT, manual) and why
+3) UX flow for conflicts and states (offline, syncing, error)
+4) Security: encryption, auth, and data minimization
+5) Tests and simulations (latency, duplicates, disconnects)
+The app must remain useful without sync.
+
+Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Data anonymization plan / Plan de anonimization de datos",
+            category="Research",
+            tags=[*shared, "privacy", "anonymization", "redaction", "datasets", "risk"],
+            rating=5,
+            body="""ES:
+Crea un plan de anonimization para este conjunto de datos. Entrega:
+1) Campos sensibles (PII/PHI/secretos) y riesgos
+2) Tecnicas (masking, hashing con salt, generalizacion, k-anon, supresion)
+3) Reglas por campo (tabla) con ejemplos antes/despues
+4) Validacion: como medir reidentificacion y utilidad
+5) Politica de retencion y acceso (quien, cuanto tiempo, auditoria)
+Reglas: asume entorno local; minimiza la exposicion.
+
+Datos/Contexto:
+{context}
+
+EN:
+Create an anonymization plan for this dataset. Deliver:
+1) Sensitive fields (PII/PHI/secrets) and risks
+2) Techniques (masking, salted hashing, generalization, k-anon, suppression)
+3) Field-by-field rules (table) with before/after examples
+4) Validation: how to measure re-identification risk and utility
+5) Retention and access policy (who, how long, auditing)
+Rules: assume a local environment; minimize exposure.
+
+Data/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Prompt red-team scenarios / Escenarios de red-team de prompts",
+            category="Prompts for ChatGPT",
+            tags=[*shared, "prompting", "red-team", "safety", "abuse", "testing"],
+            rating=5,
+            body="""ES:
+Genera escenarios de red-team para estresar este prompt/sistema. Entrega:
+1) 12 ataques (cada uno: objetivo, input, por que funciona)
+2) Severidad y probabilidad (baja/media/alta)
+3) Mitigacion: cambio minimo al prompt o guardrails
+4) Tests automatizables: 5 casos con expected outcome
+Reglas: no incluyas instrucciones ilegales ni contenido peligroso; usa ejemplos abstractos.
+
+Prompt/Sistema:
+{prompt}
+
+EN:
+Generate red-team scenarios to stress-test this prompt/system. Deliver:
+1) 12 attacks (each: goal, input, why it works)
+2) Severity and likelihood (low/medium/high)
+3) Mitigation: minimal prompt/guardrail change
+4) Automatable tests: 5 cases with expected outcome
+Rules: do not include illegal instructions or dangerous content; use abstract examples.
+
+Prompt/System:
+{prompt}""",
+        ),
+        PromptCreate(
+            title="Evaluation dataset spec / Especificacion de dataset de evaluacion",
+            category="Research",
+            tags=[*shared, "evals", "dataset", "metrics", "quality", "benchmark"],
+            rating=4,
+            body="""ES:
+Especifica un dataset para evaluar este caso de uso. Incluye:
+1) Objetivo y definicion de exito
+2) Distribucion de casos (facil/medio/dificil; normales vs bordes)
+3) Esquema de cada item (campos) y 3 ejemplos completos
+4) Metricas (exactitud, cobertura, seguridad) y como calcular
+5) Protocolo de evaluacion humana (instrucciones + rubric)
+Reglas: evita datos reales; usa ejemplos sinteticos.
+
+Caso de uso:
+{use_case}
+
+EN:
+Specify a dataset to evaluate this use case. Include:
+1) Goal and success definition
+2) Case distribution (easy/medium/hard; normal vs edge)
+3) Item schema (fields) and 3 full examples
+4) Metrics (accuracy, coverage, safety) and how to compute
+5) Human eval protocol (instructions + rubric)
+Rules: avoid real data; use synthetic examples.
+
+Use case:
+{use_case}""",
+        ),
+        PromptCreate(
+            title="Product roadmap slice / Rebanada de roadmap de producto",
+            category="Productivity",
+            tags=[*shared, "roadmap", "planning", "prioritization", "milestones"],
+            rating=4,
+            body="""ES:
+Convierte estos objetivos en un slice de roadmap de 6-8 semanas. Entrega:
+1) 3-5 outcomes medibles
+2) Epics y alcance (in-scope/out-of-scope)
+3) Hitos semanales con criterios de terminado
+4) Riesgos, dependencias y mitigaciones
+5) Lista de cosas que NO haremos (para proteger el foco)
+
+Objetivos/Contexto:
+{context}
+
+EN:
+Turn these goals into a 6-8 week roadmap slice. Deliver:
+1) 3-5 measurable outcomes
+2) Epics and scope (in-scope/out-of-scope)
+3) Weekly milestones with definition of done
+4) Risks, dependencies, and mitigations
+5) Explicit list of what we will NOT do (to protect focus)
+
+Goals/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="GitHub issue triage reply / Respuesta de triage en issue de GitHub",
+            category="Productivity",
+            tags=[*shared, "github", "triage", "support", "oss", "communication"],
+            rating=4,
+            body="""ES:
+Redacta una respuesta de triage para este issue. Debe ser amable y accionable. Incluye:
+1) Agradecimiento y confirmacion de entendimiento
+2) Preguntas concretas (max 6) para reproducir/diagnosticar
+3) Checklist de informacion (version, OS, pasos, logs, config)
+4) Si procede: workaround temporal
+5) Etiquetas sugeridas (bug, question, needs-repro, etc.)
+Reglas: no pidas datos privados; sugiere redaccion.
+
+Issue:
+{issue}
+
+EN:
+Draft a triage reply for this issue. Keep it friendly and actionable. Include:
+1) Thanks and understanding confirmation
+2) Concrete questions (max 6) to reproduce/diagnose
+3) Info checklist (version, OS, steps, logs, config)
+4) If applicable: temporary workaround
+5) Suggested labels (bug, question, needs-repro, etc.)
+Rules: do not request private data; suggest redaction.
+
+Issue:
+{issue}""",
+        ),
+        PromptCreate(
+            title="Contributor-friendly bug report form / Formulario de reporte de bug amigable",
+            category="Productivity",
+            tags=[*shared, "oss", "bugs", "templates", "github", "repro"],
+            rating=5,
+            body="""ES:
+Crea una plantilla de bug report para un repo open-source. Entrega un template en Markdown con:
+- Resumen
+- Version/entorno
+- Pasos para reproducir
+- Resultado esperado vs actual
+- Logs (con instrucciones para redactar secretos)
+- Capturas (opcional)
+- Contexto adicional
+- Incluye un ejemplo completado con datos ficticios.
+
+EN:
+Create a bug report template for an open-source repo. Return a Markdown template with:
+- Summary
+- Version/environment
+- Steps to reproduce
+- Expected vs actual result
+- Logs (with instructions to redact secrets)
+- Screenshots (optional)
+- Additional context
+- Include a filled example with fictional data.""",
+        ),
+        PromptCreate(
+            title="Design system component checklist / Checklist de componente de design system",
+            category="Design",
+            tags=[*shared, "design-system", "components", "a11y", "ux", "frontend"],
+            rating=4,
+            body="""ES:
+Evalua este componente para un design system. Devuelve un checklist con:
+1) Props/APIs (nombres, defaults, variantes)
+2) Accesibilidad (roles, labels, teclado, focus, contrast)
+3) Estados (loading, empty, error, disabled)
+4) Responsive y theming
+5) Performance (re-renders, virtualization si aplica)
+6) Documentacion y ejemplos
+Incluye 'bloqueantes' vs 'nice-to-have'.
+
+Componente/Contexto:
+{context}
+
+EN:
+Evaluate this component for a design system. Return a checklist covering:
+1) Props/APIs (names, defaults, variants)
+2) Accessibility (roles, labels, keyboard, focus, contrast)
+3) States (loading, empty, error, disabled)
+4) Responsive and theming
+5) Performance (re-renders, virtualization if applicable)
+6) Documentation and examples
+Include 'blockers' vs 'nice-to-have'.
+
+Component/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Microcopy UX pass / Revision de microcopy UX",
+            category="Design",
+            tags=[*shared, "ux", "copy", "microcopy", "ui", "accessibility"],
+            rating=4,
+            body="""ES:
+Mejora el microcopy de esta UI. Entrega:
+1) Cambios propuestos (antes -> despues) por pantalla/elemento
+2) Guia de tono (3-5 reglas)
+3) Consistencia de terminos y etiquetas
+4) Errores y vacios: mensajes de error, empty states, loading
+5) Accesibilidad: claridad, longitud, lenguaje simple
+Reglas: no inventes funciones que no existan; no uses promesas legales.
+
+Texto/UI:
+{context}
+
+EN:
+Improve the microcopy for this UI. Deliver:
+1) Proposed changes (before -> after) per screen/element
+2) Tone guide (3-5 rules)
+3) Terminology consistency
+4) Error/empty/loading messages
+5) Accessibility: clarity, length, plain language
+Rules: do not invent features that do not exist; avoid legal promises.
+
+Text/UI:
+{context}""",
+        ),
+        PromptCreate(
+            title="Case study outline / Esquema de caso de exito",
+            category="Marketing",
+            tags=[*shared, "case-study", "storytelling", "marketing", "structure"],
+            rating=4,
+            body="""ES:
+Crea el esquema de un caso de exito. Incluye:
+1) Contexto del cliente (anonimo si es necesario)
+2) Problema (con sintomas medibles)
+3) Solucion (pasos, timeline)
+4) Resultados (metricas; si faltan, placeholders)
+5) Lecciones y recomendaciones
+6) Citas (solo si se proporcionan; si no, sugiere donde conseguirlas)
+
+Detalles:
+{context}
+
+EN:
+Create an outline for a case study. Include:
+1) Customer context (anonymous if needed)
+2) Problem (with measurable symptoms)
+3) Solution (steps, timeline)
+4) Results (metrics; use placeholders if missing)
+5) Lessons and recommendations
+6) Quotes (only if provided; otherwise suggest how to gather them)
+
+Details:
+{context}""",
+        ),
+        PromptCreate(
+            title="Explain like I'm new / Explica como si fuera nuevo",
+            category="Coding",
+            tags=[*shared, "teaching", "onboarding", "explain", "examples"],
+            rating=5,
+            body="""ES:
+Explica este concepto/codigo como si yo fuera nuevo en el tema. Formato:
+1) Idea central en 1 frase
+2) Metafora simple (si ayuda)
+3) Explicacion paso a paso con un ejemplo minimo
+4) Errores comunes y como evitarlos
+5) Mini ejercicio con solucion
+Reglas: no asumas contexto no dado; define terminos.
+
+Tema/Codigo:
+{context}
+
+EN:
+Explain this concept/code as if I were new to it. Format:
+1) Core idea in 1 sentence
+2) Simple metaphor (if helpful)
+3) Step-by-step explanation with a minimal example
+4) Common mistakes and how to avoid them
+5) Mini exercise with a solution
+Rules: do not assume unstated context; define terms.
+
+Topic/Code:
+{context}""",
+        ),
+        PromptCreate(
+            title="Agent workspace boundaries / Limites del workspace para un agente",
+            category="Agents",
+            tags=[*shared, "agents", "safety", "boundaries", "filesystem", "workflow"],
+            rating=4,
+            body="""ES:
+Define limites claros para un agente que trabaja en un repo. Entrega:
+1) Que puede leer/escribir (paths permitidos)
+2) Acciones prohibidas por defecto (delete masivo, push, secrets)
+3) Politica de aprobacion para operaciones riesgosas
+4) Politica de datos: que no debe exfiltrar ni copiar
+5) Checklist final antes de entregar cambios
+Devuelve tambien un bloque YAML con estas reglas.
+
+Contexto:
+{context}
+
+EN:
+Define clear workspace boundaries for an agent working in a repo. Deliver:
+1) What it can read/write (allowed paths)
+2) Default-prohibited actions (mass deletes, pushes, secrets)
+3) Approval policy for risky operations
+4) Data policy: what it must not exfiltrate or copy
+5) Final checklist before delivering changes
+Also return a YAML block with these rules.
+
+Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Supply-chain risk review / Revision de riesgo de supply-chain",
+            category="Research",
+            tags=[*shared, "security", "supply-chain", "dependencies", "risk", "oss"],
+            rating=5,
+            body="""ES:
+Analiza riesgos de supply-chain para este proyecto. Entrega:
+1) Superficies de riesgo (deps, build, CI, releases)
+2) Controles recomendados (pinning, hashes, provenance, minimal perms)
+3) Lista priorizada de acciones (P0/P1/P2) con esfuerzo estimado
+4) Politica de actualizaciones (cadencia y criterios)
+5) Checklist rapido para PRs de dependencias
+Reglas: asume un repo publico; prioriza controles simples.
+
+Proyecto/Contexto:
+{context}
+
+EN:
+Analyze supply-chain risks for this project. Deliver:
+1) Risk surfaces (deps, build, CI, releases)
+2) Recommended controls (pinning, hashes, provenance, minimal perms)
+3) Prioritized actions (P0/P1/P2) with rough effort
+4) Update policy (cadence and criteria)
+5) Quick checklist for dependency PRs
+Rules: assume a public repo; prioritize simple controls.
+
+Project/Context:
+{context}""",
         ),
     ]
