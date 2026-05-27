@@ -4251,4 +4251,571 @@ Rules: assume a public repo; prioritize simple controls.
 Project/Context:
 {context}""",
         ),
+        PromptCreate(
+            title="Git bisect guide / Guia de git bisect",
+            category="Debugging",
+            tags=[*shared, "git", "bisect", "debugging", "regression"],
+            rating=5,
+            body="""ES:
+Ayudame a encontrar el commit que introdujo una regresion usando `git bisect`. Entrega:
+1) Requisitos previos (rama, tests, limpieza del repo)
+2) Comandos exactos para iniciar bisect (good/bad) y ejecutarlo con un test
+3) Como definir un criterio automatico (script o comando) para marcar good/bad
+4) Que hacer si el test es flaky o lento
+5) Como terminar y volver a un estado limpio
+6) Nota de seguridad: no reescribas historia si no lo pido
+
+Contexto (comando de test, sintomas, rango de commits):
+{context}
+
+EN:
+Help me find the commit that introduced a regression using `git bisect`. Deliver:
+1) Preconditions (branch, tests, clean repo)
+2) Exact commands to start bisect (good/bad) and drive it with a test
+3) How to define an automatic criterion (script/command) to mark good/bad
+4) What to do if the test is flaky or slow
+5) How to finish and return to a clean state
+6) Safety note: do not rewrite history unless asked
+
+Context (test command, symptoms, commit range):
+{context}""",
+        ),
+        PromptCreate(
+            title="Minimal reproduction in a sandbox / Reproduccion minima en sandbox",
+            category="Debugging",
+            tags=[*shared, "debugging", "repro", "minimize", "isolation"],
+            rating=5,
+            body="""ES:
+Convierte este bug en una reproduccion minima. Entrega:
+1) Hipotesis sobre el componente minimo que falla
+2) Pasos para aislar variables (config, datos, red, concurrencia)
+3) Un repro en 1 archivo (si aplica) o un repo-esqueleto (estructura + comandos)
+4) Inputs exactos y expected/actual
+5) Criterio de exito: un test automatizado que falla de forma determinista
+Reglas: evita datos sensibles; usa valores ficticios.
+
+Bug/Contexto:
+{context}
+
+EN:
+Turn this bug into a minimal reproduction. Deliver:
+1) Hypothesis about the smallest failing component
+2) Steps to isolate variables (config, data, network, concurrency)
+3) A one-file repro (if applicable) or a skeleton repo (structure + commands)
+4) Exact inputs and expected/actual output
+5) Success criterion: a deterministic failing automated test
+Rules: avoid sensitive data; use fictional values.
+
+Bug/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Dependency license check / Revision de licencias de dependencias",
+            category="Research",
+            tags=[*shared, "licenses", "oss", "compliance", "dependencies"],
+            rating=4,
+            body="""ES:
+Revisa licencias de dependencias para este proyecto. Entrega:
+1) Lista de dependencias y sus licencias (si falta info, marca como Unknown)
+2) Riesgos tipicos por familia (permisivas, copyleft, network copyleft)
+3) Acciones recomendadas (atribucion, NOTICE, reemplazos) priorizadas
+4) Politica simple para PRs de dependencias (checks minimos)
+Reglas: no asumas licencias sin fuente; propone como verificar.
+
+Proyecto/Dependencias (lockfile, lista, etc.):
+{context}
+
+EN:
+Review dependency licenses for this project. Deliver:
+1) Dependency list and their licenses (mark Unknown if missing)
+2) Typical risks by family (permissive, copyleft, network copyleft)
+3) Recommended actions (attribution, NOTICE, replacements) prioritized
+4) A simple policy for dependency PRs (minimum checks)
+Rules: do not assume licenses without a source; propose how to verify.
+
+Project/Dependencies (lockfile, list, etc.):
+{context}""",
+        ),
+        PromptCreate(
+            title="API pagination design / Diseno de paginacion de API",
+            category="Architecture",
+            tags=[*shared, "api", "pagination", "design", "contracts"],
+            rating=5,
+            body="""ES:
+Disena paginacion para este endpoint. Incluye:
+1) Estrategia recomendada (cursor vs offset) y por que
+2) Contrato request/response (campos, ejemplos)
+3) Ordenamiento estable, filtros y coherencia en presencia de inserts/updates
+4) Errores y limites (max page size, rate limits)
+5) Plan de migracion desde el esquema actual (si existe)
+
+Contexto:
+{context}
+
+EN:
+Design pagination for this endpoint. Include:
+1) Recommended strategy (cursor vs offset) and why
+2) Request/response contract (fields, examples)
+3) Stable ordering, filters, and consistency under inserts/updates
+4) Errors and limits (max page size, rate limits)
+5) Migration plan from the current scheme (if any)
+
+Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Data migration plan / Plan de migracion de datos",
+            category="Architecture",
+            tags=[*shared, "data", "migration", "backfill", "rollout"],
+            rating=5,
+            body="""ES:
+Crea un plan de migracion de datos seguro. Entrega:
+1) Objetivo y cambios de esquema
+2) Estrategia (expand/contract) con fases y criterios de salida
+3) Backfill (batching, idempotencia, reintentos) y como medir progreso
+4) Compatibilidad hacia atras (lecturas/escrituras duales si aplica)
+5) Rollback plan y senales de parada
+6) Checklist de verificacion post-migracion
+
+Contexto:
+{context}
+
+EN:
+Create a safe data migration plan. Deliver:
+1) Goal and schema changes
+2) Strategy (expand/contract) with phases and exit criteria
+3) Backfill (batching, idempotency, retries) and how to measure progress
+4) Backward compatibility (dual reads/writes if applicable)
+5) Rollback plan and stop signals
+6) Post-migration verification checklist
+
+Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Observability quickstart / Inicio rapido de observabilidad",
+            category="Architecture",
+            tags=[*shared, "observability", "logging", "metrics", "tracing"],
+            rating=4,
+            body="""ES:
+Propone un inicio rapido de observabilidad para una app local-first. Entrega:
+1) Eventos y metricas minimas (P0) con nombres sugeridos
+2) Estructura de logs (campos obligatorios, niveles)
+3) Trazas (si aplica): que spans y atributos capturar
+4) Politica de privacidad: que NO registrar (PII, secretos)
+5) Plan de rollout incremental y como validar que sirve
+
+App/Contexto:
+{context}
+
+EN:
+Propose an observability quickstart for a local-first app. Deliver:
+1) Minimum events and metrics (P0) with suggested names
+2) Log structure (required fields, levels)
+3) Tracing (if applicable): which spans and attributes to capture
+4) Privacy policy: what NOT to log (PII, secrets)
+5) Incremental rollout plan and how to validate usefulness
+
+App/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="UX usability test script / Guion de test de usabilidad",
+            category="Design",
+            tags=[*shared, "ux", "usability", "research", "script"],
+            rating=5,
+            body="""ES:
+Escribe un guion de test de usabilidad de 30-45 min para este producto/flujo. Incluye:
+1) Objetivo y criterios de exito
+2) Screening rapido (si aplica)
+3) Warm-up y preguntas de contexto
+4) Tareas (con escenarios realistas) y probes
+5) Preguntas de cierre (SUS o similares opcional)
+6) Plan de notas: que observar y como codificar hallazgos
+Reglas: evita pedir datos personales; usa ejemplos ficticios.
+
+Producto/Flujo:
+{context}
+
+EN:
+Write a 30–45 min usability test script for this product/flow. Include:
+1) Goal and success criteria
+2) Quick screening (if applicable)
+3) Warm-up and background questions
+4) Tasks (realistic scenarios) and probes
+5) Wrap-up questions (SUS or similar optional)
+6) Note-taking plan: what to observe and how to code findings
+Rules: avoid collecting personal data; use fictional examples.
+
+Product/Flow:
+{context}""",
+        ),
+        PromptCreate(
+            title="Design token audit / Auditoria de design tokens",
+            category="Design",
+            tags=[*shared, "design-system", "tokens", "accessibility", "consistency"],
+            rating=4,
+            body="""ES:
+Audita nuestros design tokens. Entrega:
+1) Inventario (color, tipografia, spacing, radius, shadow, motion)
+2) Inconsistencias y duplicados (con regla para consolidar)
+3) Accesibilidad (contraste) y tokens que faltan
+4) Convencion de nombres propuesta y ejemplos
+5) Plan de migracion incremental (sin romper UI)
+
+Tokens/Contexto:
+{context}
+
+EN:
+Audit our design tokens. Deliver:
+1) Inventory (color, typography, spacing, radius, shadow, motion)
+2) Inconsistencies and duplicates (with a consolidation rule)
+3) Accessibility (contrast) and missing tokens
+4) Proposed naming convention with examples
+5) Incremental migration plan (avoid breaking UI)
+
+Tokens/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Changelog entry writer / Redactor de changelog",
+            category="Productivity",
+            tags=[*shared, "release", "changelog", "writing", "docs"],
+            rating=4,
+            body="""ES:
+Escribe una entrada de changelog a partir de estos commits/notas. Devuelve:
+1) Titulo de release (si aplica)
+2) Secciones: Added/Changed/Fixed/Security
+3) Texto orientado a usuario (no interno) y conciso
+4) Notas de migracion (si hay breaking changes)
+Reglas: no inventes features; si falta info, pide un dato puntual.
+
+Commits/Notas:
+{context}
+
+EN:
+Write a changelog entry from these commits/notes. Return:
+1) Release title (if applicable)
+2) Sections: Added/Changed/Fixed/Security
+3) User-facing concise wording (avoid internal jargon)
+4) Migration notes (if there are breaking changes)
+Rules: do not invent features; if info is missing, ask for one specific detail.
+
+Commits/Notes:
+{context}""",
+        ),
+        PromptCreate(
+            title="Release checklist / Checklist de release",
+            category="Productivity",
+            tags=[*shared, "release", "checklist", "qa", "ops"],
+            rating=5,
+            body="""ES:
+Construye un checklist de release para este proyecto. Incluye:
+1) Pre-release (tests, lint, versioning, docs)
+2) Seguridad y privacidad (secrets scan, permisos)
+3) Build/packaging y reproducibilidad
+4) Deploy/publicacion (pasos, validaciones)
+5) Post-release (monitorizacion, rollback readiness, notas)
+Devuelve un checklist accionable en Markdown con casillas.
+
+Proyecto/Contexto:
+{context}
+
+EN:
+Build a release checklist for this project. Include:
+1) Pre-release (tests, lint, versioning, docs)
+2) Security and privacy (secrets scan, permissions)
+3) Build/packaging and reproducibility
+4) Deploy/publish (steps, validations)
+5) Post-release (monitoring, rollback readiness, notes)
+Return an actionable Markdown checklist with checkboxes.
+
+Project/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Job story generator / Generador de job stories",
+            category="Marketing",
+            tags=[*shared, "product", "research", "jtbd", "messaging"],
+            rating=4,
+            body="""ES:
+Genera Job Stories (JTBD) a partir de este contexto. Entrega:
+1) 5-8 job stories en formato: Cuando..., quiero..., para poder...
+2) Segmentos/variantes (novato vs power user, etc.)
+3) Senales de progreso (metricas o indicadores) por job
+4) Preguntas para validar con usuarios (sin leading questions)
+
+Contexto:
+{context}
+
+EN:
+Generate Job Stories (JTBD) from this context. Deliver:
+1) 5–8 job stories in the format: When..., I want..., so I can...
+2) Segments/variants (novice vs power user, etc.)
+3) Progress signals (metrics or indicators) per job
+4) Questions to validate with users (avoid leading questions)
+
+Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Pricing page messaging / Mensajes de pagina de precios",
+            category="Marketing",
+            tags=[*shared, "pricing", "copy", "positioning", "objections"],
+            rating=4,
+            body="""ES:
+Escribe mensajes para una pagina de precios. Entrega:
+1) Titular/subtitular para 3 planes
+2) 6-10 bullets de valor (no features) por plan
+3) Objeciones tipicas y como resolverlas con copy
+4) FAQ (5-8) enfocadas en riesgo, privacidad y soporte
+Reglas: no inventes claims medibles; usa placeholders si faltan datos.
+
+Producto/Planes/Contexto:
+{context}
+
+EN:
+Write messaging for a pricing page. Deliver:
+1) Headline/subheadline for 3 plans
+2) 6–10 value bullets (not just features) per plan
+3) Common objections and how to address them with copy
+4) FAQ (5–8) focused on risk, privacy, and support
+Rules: do not invent measurable claims; use placeholders if data is missing.
+
+Product/Plans/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Content repurposing plan / Plan de reutilizacion de contenido",
+            category="Marketing",
+            tags=[*shared, "content", "repurpose", "distribution", "marketing"],
+            rating=4,
+            body="""ES:
+Convierte esta pieza de contenido en un plan de reutilizacion multiplataforma. Entrega:
+1) 5-10 atomizaciones (tweets, LinkedIn, newsletter, short video, etc.)
+2) Angulos alternativos (beneficio, historia, datos, opinion)
+3) Calendario de 2 semanas con cadencia
+4) CTA sugeridas y metricas de exito por canal
+Reglas: respeta tono; no inventes datos.
+
+Contenido original:
+{context}
+
+EN:
+Turn this content into a cross-platform repurposing plan. Deliver:
+1) 5–10 atoms (tweets, LinkedIn, newsletter, short video, etc.)
+2) Alternate angles (benefit, story, data, opinion)
+3) Two-week calendar with cadence
+4) Suggested CTAs and success metrics per channel
+Rules: keep the tone; do not invent data.
+
+Original content:
+{context}""",
+        ),
+        PromptCreate(
+            title="Academic paper reading grid / Plantilla de lectura de paper",
+            category="Research",
+            tags=[*shared, "research", "papers", "notes", "learning"],
+            rating=4,
+            body="""ES:
+Ayudame a leer y resumir un paper con una plantilla. Devuelve:
+1) Pregunta que responde y aportacion principal
+2) Metodo/datos (dataset, setup, supuestos)
+3) Resultados clave (con numeros si se proveen)
+4) Limitaciones y amenazas a validez
+5) Implicaciones practicas
+6) Preguntas abiertas y proximos experimentos
+7) Glosario de terminos (si hay jerga)
+Reglas: cita solo lo que se proporciona; marca incertidumbre.
+
+Paper/Notas:
+{context}
+
+EN:
+Help me read and summarize a paper using a template. Return:
+1) Research question and main contribution
+2) Method/data (dataset, setup, assumptions)
+3) Key results (include numbers if provided)
+4) Limitations and threats to validity
+5) Practical implications
+6) Open questions and next experiments
+7) Glossary (if jargon-heavy)
+Rules: cite only what is provided; mark uncertainty.
+
+Paper/Notes:
+{context}""",
+        ),
+        PromptCreate(
+            title="Source credibility rubric / Rubrica de credibilidad de fuentes",
+            category="Research",
+            tags=[*shared, "research", "sources", "credibility", "evaluation"],
+            rating=5,
+            body="""ES:
+Crea una rubrica para evaluar la credibilidad de fuentes sobre este tema. Entrega:
+1) Criterios (autoridad, evidencia, conflictos, actualidad, replicabilidad)
+2) Puntuacion 0-2 por criterio (con definiciones claras)
+3) Red flags comunes y como verificarlas
+4) Plantilla para registrar fuentes (tabla)
+5) Recomendacion de triangulacion (como corroborar)
+
+Tema/Contexto:
+{context}
+
+EN:
+Create a rubric to evaluate source credibility for this topic. Deliver:
+1) Criteria (authority, evidence, conflicts, recency, replicability)
+2) 0–2 scoring per criterion (clear definitions)
+3) Common red flags and how to check them
+4) A source-tracking template (table)
+5) Triangulation recommendation (how to corroborate)
+
+Topic/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Agent tool-use policy / Politica de uso de herramientas para agentes",
+            category="Agents",
+            tags=[*shared, "agents", "tools", "policy", "safety", "approvals"],
+            rating=5,
+            body="""ES:
+Define una politica de uso de herramientas para un agente. Incluye:
+1) Lista de herramientas y propositos
+2) Que requiere aprobacion (red, push, deletes, pagos, prod)
+3) Reglas para manejo de errores (reintentos, backoff, rollback)
+4) Politica de datos (PII, secretos, logs) y redaccion
+5) Formato de auditoria: como registrar acciones y resultados
+Devuelve una version corta (para prompt) y una larga (para docs).
+
+Contexto:
+{context}
+
+EN:
+Define a tool-use policy for an agent. Include:
+1) Tool list and purposes
+2) What requires approval (network, push, deletes, payments, prod)
+3) Error-handling rules (retries, backoff, rollback)
+4) Data policy (PII, secrets, logs) and redaction
+5) Audit format: how to record actions and outcomes
+Return a short version (for prompts) and a long version (for docs).
+
+Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Codex test-first patch / Parche test-first para Codex",
+            category="Prompts for Codex",
+            tags=[*shared, "codex", "testing", "tdd", "regression", "patch"],
+            rating=5,
+            favorite=True,
+            body="""ES:
+Actua como Codex en modo test-first. Reglas:
+1) Primero reproduce el bug o agrega un test que falle (minimo)
+2) Luego implementa el fix mas pequeno posible
+3) Asegura que el estilo del repo se mantiene (format/lint)
+4) No toques codigo no relacionado
+5) Termina con comandos ejecutados y resultados (tests/lint)
+Formato de salida:
+- Hipotesis
+- Test (archivo + descripcion)
+- Cambio minimo
+- Verificacion (comandos + salida resumida)
+
+Tarea/Contexto:
+{context}
+
+EN:
+Act as Codex in test-first mode. Rules:
+1) First reproduce the bug or add a minimal failing test
+2) Then implement the smallest possible fix
+3) Keep repo style (format/lint)
+4) Do not touch unrelated code
+5) Finish with executed commands and results (tests/lint)
+Output format:
+- Hypothesis
+- Test (file + description)
+- Minimal change
+- Verification (commands + brief output)
+
+Task/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Claude concise redline / Redline conciso para Claude",
+            category="Prompts for Claude",
+            tags=[*shared, "claude", "editing", "redline", "clarity"],
+            rating=4,
+            body="""ES:
+Haz un redline conciso de este texto. Devuelve:
+1) Version revisada (sin explicaciones en medio)
+2) Lista corta de cambios (max 8) con razon (claridad, tono, consistencia)
+3) Preguntas abiertas (si falta info)
+Reglas: mantén significado; evita inventar hechos.
+
+Texto:
+{context}
+
+EN:
+Do a concise redline of this text. Return:
+1) Revised version (no inline explanations)
+2) Short change list (max 8) with reason (clarity, tone, consistency)
+3) Open questions (if info is missing)
+Rules: preserve meaning; do not invent facts.
+
+Text:
+{context}""",
+        ),
+        PromptCreate(
+            title="ChatGPT evaluation rubric / Rubrica de evaluacion ChatGPT",
+            category="Prompts for ChatGPT",
+            tags=[*shared, "chatgpt", "evaluation", "rubric", "quality"],
+            rating=4,
+            body="""ES:
+Construye una rubrica para evaluar respuestas a este tipo de tarea. Entrega:
+1) 6-10 criterios con definicion (exactitud, cobertura, accionabilidad, seguridad, claridad)
+2) Puntuacion 1-5 por criterio con anclas
+3) Ejemplos de una respuesta 1/5 vs 5/5 (breves)
+4) Checklist final para el evaluador
+Reglas: no pidas cadena de pensamiento; evalua outputs observables.
+
+Tipo de tarea/Contexto:
+{context}
+
+EN:
+Build a rubric to evaluate answers for this type of task. Deliver:
+1) 6–10 criteria with definitions (accuracy, coverage, actionability, safety, clarity)
+2) 1–5 scoring per criterion with anchors
+3) Brief examples of a 1/5 vs 5/5 response
+4) Final evaluator checklist
+Rules: do not ask for chain-of-thought; evaluate observable outputs.
+
+Task type/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Prompt pack curation / Curacion de pack de prompts",
+            category="Prompts",
+            tags=[*shared, "prompts", "library", "curation", "taxonomy"],
+            rating=5,
+            body="""ES:
+Cura un pack de prompts para un repositorio publico. Entrega:
+1) Taxonomia propuesta (categorias + tags) y convenciones de nombres
+2) Reglas de calidad (claridad, limites, formato de salida, ejemplos)
+3) Checklist de seguridad/privacidad (sin PII, sin secretos, sin datos de cliente)
+4) Proceso para evitar duplicados y mantener consistencia
+5) Plan de mantenimiento (versionado, deprecaciones, notas de cambios)
+
+Contexto del pack:
+{context}
+
+EN:
+Curate a prompt pack for a public repository. Deliver:
+1) Proposed taxonomy (categories + tags) and naming conventions
+2) Quality rules (clarity, constraints, output format, examples)
+3) Safety/privacy checklist (no PII, no secrets, no customer data)
+4) Process to avoid duplicates and keep consistency
+5) Maintenance plan (versioning, deprecations, changelog notes)
+
+Pack context:
+{context}""",
+        ),
     ]
