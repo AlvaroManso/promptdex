@@ -5417,4 +5417,564 @@ Rules: avoid vague tasks; every item must be verifiable.
 Input/Context:
 {context}""",
         ),
+        PromptCreate(
+            title="One-page PRD / PRD de una pagina",
+            category="Productivity",
+            tags=[*shared, "productivity", "prd", "writing", "product"],
+            rating=5,
+            body="""ES:
+Escribe un PRD de 1 pagina para esta idea. Incluye:
+- Problema y para quien
+- Objetivos (3 max) y no-objetivos
+- Alcance (MVP) y fases futuras
+- Historias de usuario (5 max) con criterios de aceptacion
+- Riesgos, dependencias, metricas (como sabremos que funciona)
+Reglas: evita jergas; si faltan datos, enumera preguntas.
+
+Idea/Contexto:
+{context}
+
+EN:
+Write a one-page PRD for this idea. Include:
+- Problem and target users
+- Goals (max 3) and non-goals
+- Scope (MVP) and future phases
+- User stories (max 5) with acceptance criteria
+- Risks, dependencies, metrics (how we’ll know it works)
+Rules: avoid jargon; if data is missing, list questions.
+
+Idea/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Threat model lite / Modelo de amenazas ligero",
+            category="Architecture",
+            tags=[*shared, "architecture", "security", "threat-model", "privacy"],
+            rating=5,
+            body="""ES:
+Haz un threat model ligero para este sistema. Devuelve:
+1) Activos a proteger (datos, secretos, disponibilidad)
+2) Superficies de ataque (entradas, integraciones, permisos)
+3) 5 amenazas principales (STRIDE opcional) con impacto/probabilidad
+4) Mitigaciones concretas y prioridad (P0/P1/P2)
+5) Preguntas abiertas y supuestos
+Reglas: no inventes componentes; etiqueta suposiciones vs evidencia.
+
+Sistema/Contexto:
+{context}
+
+EN:
+Do a lightweight threat model for this system. Return:
+1) Assets to protect (data, secrets, availability)
+2) Attack surfaces (inputs, integrations, permissions)
+3) Top 5 threats (STRIDE optional) with impact/likelihood
+4) Concrete mitigations and priority (P0/P1/P2)
+5) Open questions and assumptions
+Rules: don’t invent components; label assumptions vs evidence.
+
+System/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="API contract from examples / Contrato API desde ejemplos",
+            category="Architecture",
+            tags=[*shared, "architecture", "api", "contract", "examples"],
+            rating=4,
+            body="""ES:
+Dado este set de ejemplos de request/response, deriva un contrato API consistente:
+- Endpoints, metodos, rutas
+- Esquemas (campos, tipos, opcionales, enums)
+- Codigos de estado y errores (formato estandar)
+- Reglas de validacion y limites
+- 3 ejemplos por endpoint (feliz + 2 errores)
+Reglas: mantente fiel a los ejemplos; si hay conflicto, propon opciones.
+
+Ejemplos:
+{context}
+
+EN:
+Given these request/response examples, derive a consistent API contract:
+- Endpoints, methods, routes
+- Schemas (fields, types, optionality, enums)
+- Status codes and errors (standard format)
+- Validation rules and limits
+- 3 examples per endpoint (happy + 2 error cases)
+Rules: stay faithful to the examples; if conflicts exist, propose options.
+
+Examples:
+{context}""",
+        ),
+        PromptCreate(
+            title="Log triage to hypotheses / Triaje de logs a hipotesis",
+            category="Debugging",
+            tags=[*shared, "debugging", "logs", "hypotheses", "triage"],
+            rating=5,
+            body="""ES:
+Analiza estos logs y produce:
+1) Resumen del fallo (1-2 frases)
+2) Timeline de eventos (bullet list)
+3) 3 hipotesis ordenadas por probabilidad con evidencia (lineas de log)
+4) 5 checks o experimentos para confirmar/refutar (comandos si aplica)
+5) Propuesta de fix minimo y prueba de regresion
+Reglas: no asumas infraestructura; marca incertidumbre.
+
+Logs/Contexto:
+{context}
+
+EN:
+Analyze these logs and produce:
+1) Failure summary (1-2 sentences)
+2) Event timeline (bullets)
+3) 3 hypotheses ordered by likelihood with evidence (log lines)
+4) 5 checks/experiments to confirm/refute (commands if applicable)
+5) Minimal fix proposal and a regression test idea
+Rules: don’t assume infrastructure; mark uncertainty.
+
+Logs/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Unit test selection / Seleccion de pruebas unitarias",
+            category="Coding",
+            tags=[*shared, "coding", "tests", "unit-tests", "coverage"],
+            rating=4,
+            body="""ES:
+Para este cambio, decide que pruebas unitarias agregar o actualizar. Devuelve:
+- Riesgos principales del cambio (3 max)
+- Casos de prueba propuestos (tabla: nombre, objetivo, inputs, asserts)
+- Que NO probar (y por que)
+- Estrategia para mocks/stubs (minimo necesario)
+Reglas: prioriza tests deterministas y rapidos; evita over-mocking.
+
+Cambio/Contexto:
+{context}
+
+EN:
+For this change, decide which unit tests to add or update. Return:
+- Main change risks (max 3)
+- Proposed test cases (table: name, goal, inputs, asserts)
+- What NOT to test (and why)
+- Mock/stub strategy (minimum needed)
+Rules: prioritize deterministic fast tests; avoid over-mocking.
+
+Change/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="SQL query explainer / Explicador de consulta SQL",
+            category="Coding",
+            tags=[*shared, "coding", "sql", "performance", "explain"],
+            rating=4,
+            body="""ES:
+Explica esta consulta SQL para una persona tecnica:
+1) Que hace (alto nivel)
+2) Tabla por tabla: joins, filtros, agregaciones
+3) Posibles problemas (N+1, cardinalidad, indices, funciones no sargables)
+4) 2 alternativas: (a) mas legible (b) mas eficiente
+5) Si aplica: indices sugeridos y por que
+Reglas: no inventes esquema; pide columnas faltantes.
+
+SQL/Contexto:
+{context}
+
+EN:
+Explain this SQL query for a technical reader:
+1) What it does (high level)
+2) Table by table: joins, filters, aggregations
+3) Potential issues (cardinality, indexes, non-sargable functions)
+4) Two alternatives: (a) more readable (b) more efficient
+5) If applicable: suggested indexes and why
+Rules: don’t invent schema; ask for missing columns.
+
+SQL/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Accessibility QA checklist / Checklist QA de accesibilidad",
+            category="Design",
+            tags=[*shared, "design", "a11y", "qa", "checklist"],
+            rating=5,
+            body="""ES:
+Haz una revision de accesibilidad para esta UI. Devuelve:
+- Problemas por severidad (P0/P1/P2) con evidencia
+- Recomendacion concreta (texto exacto, aria-labels, roles, focus)
+- Checks de teclado (tab order, focus visible, traps)
+- Contraste y tamanos (si hay datos)
+- Lista de pruebas manuales (10 max)
+Reglas: no inventes colores/HTML; pide capturas o markup si falta.
+
+UI/Contexto:
+{context}
+
+EN:
+Do an accessibility review for this UI. Return:
+- Issues by severity (P0/P1/P2) with evidence
+- Concrete recommendations (exact copy, aria-labels, roles, focus)
+- Keyboard checks (tab order, focus visible, traps)
+- Contrast and sizing (if data provided)
+- Manual test list (max 10)
+Rules: don’t invent colors/HTML; ask for screenshots/markup if missing.
+
+UI/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Design token audit / Auditoria de design tokens",
+            category="Design",
+            tags=[*shared, "design", "design-system", "tokens", "consistency"],
+            rating=4,
+            body="""ES:
+Audita estos estilos/components para detectar inconsistencias de tokens. Entrega:
+1) Lista de tokens implicitos (espaciado, tipografia, color, radius)
+2) Duplicados y valores cercanos (con propuesta de consolidacion)
+3) Reglas de nomenclatura recomendadas
+4) Plan de migracion por etapas (bajo riesgo)
+Reglas: no inventes sistema; deriva de lo que veas.
+
+Estilos/Contexto:
+{context}
+
+EN:
+Audit these styles/components for token inconsistencies. Deliver:
+1) Implicit tokens (spacing, typography, color, radius)
+2) Duplicates and near-values (with consolidation proposal)
+3) Recommended naming rules
+4) Low-risk staged migration plan
+Rules: don’t invent a system; derive from what you see.
+
+Styles/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Landing page outline / Esquema de landing page",
+            category="Marketing",
+            tags=[*shared, "marketing", "landing-page", "copywriting", "positioning"],
+            rating=5,
+            body="""ES:
+Escribe un esquema de landing page para este producto. Devuelve:
+- Headline + subheadline (3 variantes)
+- Secciones (orden recomendado) con bullets de copy
+- Propuesta de CTA (2 opciones) y objeciones que responde
+- FAQs (6) enfocadas a conversion
+- Lista de claims que requieren prueba/metricas
+Reglas: no inventes certificaciones o clientes; mantenlo veraz.
+
+Producto/Contexto:
+{context}
+
+EN:
+Write a landing page outline for this product. Return:
+- Headline + subheadline (3 variants)
+- Sections (recommended order) with copy bullets
+- CTA proposal (2 options) and objections they address
+- FAQs (6) focused on conversion
+- Claims that require proof/metrics
+Rules: don’t invent certifications or customers; keep it truthful.
+
+Product/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="SEO keyword clustering / Cluster de keywords SEO",
+            category="Marketing",
+            tags=[*shared, "marketing", "seo", "keywords", "research"],
+            rating=4,
+            body="""ES:
+Agrupa estas keywords en clusters por intencion y tema. Entrega:
+1) Tabla: cluster, keywords, intencion (informacional/comercial/transaccional), dificultad estimada (baja/media/alta)
+2) Propuesta de paginas (slug + titulo) por cluster
+3) Internal linking sugerido (hub/spoke)
+4) Prioridad (impacto x esfuerzo) y por que
+Reglas: si faltan datos, asume lo minimo y marca suposiciones.
+
+Keywords/Contexto:
+{context}
+
+EN:
+Cluster these keywords by intent and theme. Deliver:
+1) Table: cluster, keywords, intent (informational/commercial/transactional), estimated difficulty (low/med/high)
+2) Suggested pages (slug + title) per cluster
+3) Suggested internal linking (hub/spoke)
+4) Priority (impact x effort) and why
+Rules: if data is missing, assume minimally and label assumptions.
+
+Keywords/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Competitive teardown / Desmontaje competitivo",
+            category="Research",
+            tags=[*shared, "research", "competitive", "teardown", "analysis"],
+            rating=4,
+            body="""ES:
+Haz un teardown competitivo a partir de esta info (links, notas, capturas). Devuelve:
+- Propuesta de valor y posicionamiento (en 1 frase)
+- ICP/personas y jobs-to-be-done inferidos (marca inferencias)
+- Features clave (tabla) y diferenciadores
+- Pricing/packaging (si hay datos) y riesgos
+- Oportunidades para nosotros (top 5) con hipotesis testables
+Reglas: no inventes datos; cita lo observado vs inferido.
+
+Info/Contexto:
+{context}
+
+EN:
+Do a competitive teardown based on this info (links, notes, screenshots). Return:
+- Value prop and positioning (1 sentence)
+- Inferred ICP/personas and jobs-to-be-done (label inferences)
+- Key features (table) and differentiators
+- Pricing/packaging (if present) and risks
+- Opportunities for us (top 5) with testable hypotheses
+Rules: don’t invent data; separate observed vs inferred.
+
+Info/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Literature scan memo / Memo de escaneo bibliografico",
+            category="Research",
+            tags=[*shared, "research", "literature", "memo", "sources"],
+            rating=4,
+            body="""ES:
+Con estas fuentes o notas, redacta un memo de investigacion:
+1) Pregunta de investigacion y definiciones
+2) Hallazgos principales (con citas a fuente)
+3) Lo que NO sabemos aun (gaps)
+4) Implicaciones practicas / decisiones que habilita
+5) Proximos pasos (3) para validar
+Reglas: no inventes citas; si no hay fuente, dilo.
+
+Fuentes/Notas:
+{context}
+
+EN:
+Using these sources or notes, write a research memo:
+1) Research question and definitions
+2) Key findings (with source citations)
+3) What we still don’t know (gaps)
+4) Practical implications / decisions it enables
+5) Next steps (3) to validate
+Rules: don’t invent citations; if a source isn’t provided, say so.
+
+Sources/Notes:
+{context}""",
+        ),
+        PromptCreate(
+            title="Agent tool spec / Especificacion de herramientas del agente",
+            category="Agents",
+            tags=[*shared, "agents", "tools", "interfaces", "reliability"],
+            rating=5,
+            body="""ES:
+Define el contrato de herramientas para un agente. Devuelve:
+- Lista de herramientas (nombre, inputs, outputs, errores)
+- Reglas de uso (cuando llamar, cuando NO llamar)
+- Politicas de seguridad (redaccion de secretos, limites)
+- Estrategia de retries/timeouts
+- 5 casos de prueba (inputs -> outputs esperados)
+Reglas: el contrato debe ser JSON-friendly y verificable.
+
+Contexto:
+{context}
+
+EN:
+Define a tool contract for an agent. Return:
+- Tool list (name, inputs, outputs, errors)
+- Usage rules (when to call, when NOT to call)
+- Safety policies (secret redaction, limits)
+- Retry/timeout strategy
+- 5 test cases (inputs -> expected outputs)
+Rules: contract must be JSON-friendly and verifiable.
+
+Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Checkpointed execution plan / Plan de ejecucion con checkpoints",
+            category="Agents",
+            tags=[*shared, "agents", "planning", "checkpoints", "verification"],
+            rating=4,
+            body="""ES:
+Convierte este objetivo en un plan de ejecucion con checkpoints. Incluye:
+1) 5-8 pasos max, ordenados por dependencia
+2) Para cada paso: criterio de exito verificable (comando o evidencia)
+3) Riesgos y mitigaciones por paso
+4) Que hacer si un paso falla (fallback)
+Reglas: cada checkpoint debe poder verificarse sin suposiciones.
+
+Objetivo/Contexto:
+{context}
+
+EN:
+Turn this goal into an execution plan with checkpoints. Include:
+1) 5-8 steps max, dependency-ordered
+2) For each step: verifiable success criteria (command or evidence)
+3) Risks and mitigations per step
+4) What to do if a step fails (fallback)
+Rules: each checkpoint must be verifiable without assumptions.
+
+Goal/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Tone & style adapter / Adaptador de tono y estilo",
+            category="Prompts",
+            tags=[*shared, "prompts", "writing", "tone", "style"],
+            rating=4,
+            body="""ES:
+Reescribe este texto manteniendo el significado, pero adaptando el tono y estilo segun estas instrucciones. Devuelve:
+1) Version reescrita
+2) Lista breve de cambios (5 max)
+Reglas: no cambies hechos, numeros o nombres propios; preserva estructura si se pide.
+
+Instrucciones de tono:
+{context}
+
+Texto:
+{text}
+
+EN:
+Rewrite this text preserving meaning, but adapting tone and style per instructions. Return:
+1) Rewritten version
+2) Brief change list (max 5)
+Rules: do not change facts, numbers, or proper nouns; preserve structure if requested.
+
+Tone instructions:
+{context}
+
+Text:
+{text}""",
+        ),
+        PromptCreate(
+            title="Prompt eval rubric / Rubrica de evaluacion de prompts",
+            category="Prompts",
+            tags=[*shared, "prompts", "evaluation", "rubric", "quality"],
+            rating=4,
+            body="""ES:
+Crea una rubrica para evaluar este prompt. Devuelve:
+- Criterios (claridad, contexto, restricciones, formato, seguridad, verificabilidad)
+- Escala 1-5 por criterio con descripcion
+- 3 fallos comunes y como detectarlos
+- Version mejorada del prompt siguiendo la rubrica
+Reglas: mantente general; evita afirmar \"mejores practicas actuales\" sin evidencia.
+
+Prompt a evaluar:
+{context}
+
+EN:
+Create a rubric to evaluate this prompt. Return:
+- Criteria (clarity, context, constraints, format, safety, verifiability)
+- 1-5 scale per criterion with descriptions
+- 3 common failure modes and how to spot them
+- Improved prompt version following the rubric
+Rules: keep it general; avoid claiming “current best practices” without evidence.
+
+Prompt to evaluate:
+{context}""",
+        ),
+        PromptCreate(
+            title="ChatGPT strict JSON output / Salida JSON estricta ChatGPT",
+            category="Prompts for ChatGPT",
+            tags=[*shared, "chatgpt", "json", "schema", "format"],
+            rating=4,
+            body="""ES:
+Responde SOLO con JSON valido segun este esquema. No incluyas markdown ni texto extra.
+Si falta informacion para completar un campo, usa null y agrega un array \"questions\" con lo que necesitas.
+
+Esquema JSON:
+{schema}
+
+Tarea/Contexto:
+{context}
+
+EN:
+Respond ONLY with valid JSON according to this schema. Do not include markdown or extra text.
+If information is missing for a field, use null and add a \"questions\" array with what you need.
+
+JSON schema:
+{schema}
+
+Task/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Claude disagreement protocol / Protocolo de desacuerdo Claude",
+            category="Prompts for Claude",
+            tags=[*shared, "claude", "reasoning", "safety", "disagreement"],
+            rating=4,
+            body="""ES:
+Si detectas que el usuario esta pidiendo algo incorrecto o peligroso, discrepa con claridad y educacion. Estructura:
+1) Lo que entendiste (1 frase)
+2) Por que puede estar mal/riesgoso (evidencia o principio)
+3) Alternativa segura y util (pasos concretos)
+4) Pregunta final para ajustar
+Reglas: no humilles; no inventes politicas; se directo.
+
+Solicitud/Contexto:
+{context}
+
+EN:
+If you detect the user is asking for something incorrect or unsafe, disagree clearly and politely. Structure:
+1) What you understood (1 sentence)
+2) Why it may be wrong/risky (evidence or principle)
+3) A safe, useful alternative (concrete steps)
+4) A final question to adjust
+Rules: don’t shame; don’t invent policies; be direct.
+
+Request/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Codex verification gate / Puerta de verificacion para Codex",
+            category="Prompts for Codex",
+            tags=[*shared, "codex", "verification", "tests", "ci"],
+            rating=5,
+            body="""ES:
+Antes de decir \"listo\", ejecuta verificaciones adecuadas al repo. Devuelve:
+- Comandos corridos y resultados
+- Cambios realizados (archivos tocados)
+- Riesgos restantes y como mitigarlos
+Reglas: no afirmes que algo pasa si no lo ejecutaste; si no puedes ejecutar, explica por que.
+
+Tarea/Contexto:
+{context}
+
+EN:
+Before saying “done”, run repo-appropriate verification. Return:
+- Commands run and results
+- Changes made (touched files)
+- Remaining risks and how to mitigate them
+Rules: don’t claim something passes if you didn’t run it; if you can’t run, explain why.
+
+Task/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Meeting notes to decisions / Notas de reunion a decisiones",
+            category="Productivity",
+            tags=[*shared, "productivity", "meeting", "decisions", "alignment"],
+            rating=4,
+            body="""ES:
+Convierte estas notas de reunion en un resumen accionable:
+1) Decisiones tomadas (bullet)
+2) Acciones con responsable y fecha (si existe)
+3) Preguntas abiertas
+4) Riesgos/bloqueos
+5) Proximo sync recomendado (agenda breve)
+Reglas: no inventes responsables ni fechas; si faltan, marca como TBD.
+
+Notas:
+{context}
+
+EN:
+Turn these meeting notes into an actionable summary:
+1) Decisions made (bullets)
+2) Action items with owner and date (if present)
+3) Open questions
+4) Risks/blockers
+5) Recommended next sync (short agenda)
+Rules: don’t invent owners or dates; if missing, mark TBD.
+
+Notes:
+{context}""",
+        ),
     ]
