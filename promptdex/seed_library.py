@@ -5977,4 +5977,584 @@ Rules: don’t invent owners or dates; if missing, mark TBD.
 Notes:
 {context}""",
         ),
+        PromptCreate(
+            title="PR review comment responder / Responder comentarios de PR",
+            category="Coding",
+            tags=[*shared, "coding", "review", "pr", "communication"],
+            rating=4,
+            body="""ES:
+Ayudame a responder estos comentarios de una PR y a planificar cambios minimos:
+1) Resumen del feedback (por tema)
+2) Respuestas propuestas (amables, claras, con compromisos concretos)
+3) Lista de cambios (archivo y riesgo) y orden sugerido
+4) Si hay desacuerdo, propone una alternativa con trade-offs
+Reglas: no prometas tiempos; no inventes decisiones; pregunta si falta contexto.
+
+Comentarios:
+{context}
+
+EN:
+Help me respond to these PR review comments and plan minimal changes:
+1) Feedback summary (grouped by theme)
+2) Proposed replies (polite, clear, with concrete commitments)
+3) Change list (file and risk) with suggested order
+4) If you disagree, propose an alternative with trade-offs
+Rules: don't promise timelines; don't invent decisions; ask if context is missing.
+
+Comments:
+{context}""",
+        ),
+        PromptCreate(
+            title="Changelog entry writer / Escritor de entrada de changelog",
+            category="Productivity",
+            tags=[*shared, "release", "changelog", "writing", "summary"],
+            rating=4,
+            body="""ES:
+Escribe una entrada de changelog a partir de estos cambios. Devuelve:
+- Titulo corto (<= 60 chars)
+- 3-6 bullets orientados a usuario (no a implementacion)
+- Nota de compatibilidad/ruptura si aplica
+- Nota de migracion si aplica
+Reglas: no inventes features; si hay incertidumbre, marca como "por confirmar".
+
+Cambios:
+{context}
+
+EN:
+Write a changelog entry from these changes. Return:
+- Short title (<= 60 chars)
+- 3-6 user-facing bullets (not implementation details)
+- Compatibility/breaking note if applicable
+- Migration note if applicable
+Rules: don't invent features; if uncertain, mark "needs confirmation".
+
+Changes:
+{context}""",
+        ),
+        PromptCreate(
+            title="README quickstart generator / Generador de quickstart README",
+            category="Productivity",
+            tags=[*shared, "docs", "readme", "quickstart", "onboarding"],
+            rating=4,
+            body="""ES:
+Genera una seccion "Quickstart" para el README segun este repo. Incluye:
+1) Requisitos
+2) Instalacion
+3) Comandos tipicos (dev/test/lint)
+4) Ejemplo minimo de uso
+5) Problemas comunes (2-3) y soluciones
+Reglas: usa comandos reales encontrados en el repo; si no puedes verificarlos, pide confirmacion.
+
+Contexto del repo:
+{context}
+
+EN:
+Generate a README "Quickstart" section for this repo. Include:
+1) Prereqs
+2) Installation
+3) Typical commands (dev/test/lint)
+4) Minimal usage example
+5) Common issues (2-3) and fixes
+Rules: use commands you can find in the repo; if you can't verify, ask for confirmation.
+
+Repo context:
+{context}""",
+        ),
+        PromptCreate(
+            title="API rate limit policy / Politica de rate limiting API",
+            category="Architecture",
+            tags=[*shared, "api", "architecture", "rate-limit", "security"],
+            rating=5,
+            body="""ES:
+Disena una politica de rate limiting para esta API. Devuelve:
+- Objetivos (seguridad, coste, UX)
+- Limites propuestos (por usuario/IP/token/endpoint) con numeros iniciales
+- Respuesta cuando se excede (codigo, headers, mensaje)
+- Excepciones (admins, health checks) y riesgos
+- Plan de rollout y observabilidad (metricas, alertas)
+Reglas: asume que los numeros son un punto de partida y deben ajustarse con datos.
+
+API/Contexto:
+{context}
+
+EN:
+Design a rate limiting policy for this API. Return:
+- Goals (security, cost, UX)
+- Proposed limits (per user/IP/token/endpoint) with initial numbers
+- Exceeded behavior (status code, headers, message)
+- Exceptions (admins, health checks) and risks
+- Rollout + observability plan (metrics, alerts)
+Rules: treat numbers as starting points to tune with data.
+
+API/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Error budget policy draft / Borrador de politica de error budget",
+            category="Architecture",
+            tags=[*shared, "reliability", "sre", "error-budget", "slis"],
+            rating=5,
+            body="""ES:
+Redacta una politica de error budget para este servicio. Incluye:
+1) SLI(s) y como se miden
+2) SLO(s) y ventana temporal
+3) Como se calcula el budget y umbrales (verde/amarillo/rojo)
+4) Acciones por estado (feature freeze, focus en fiabilidad, excepciones)
+5) Gobernanza: quien decide excepciones y como se documentan
+Reglas: mantenlo accionable; evita jerga innecesaria.
+
+Servicio/Contexto:
+{context}
+
+EN:
+Draft an error budget policy for this service. Include:
+1) SLI(s) and how they're measured
+2) SLO(s) and time window
+3) Budget calculation + thresholds (green/yellow/red)
+4) Actions per state (feature freeze, reliability focus, exceptions)
+5) Governance: who approves exceptions and how they're documented
+Rules: keep it actionable; avoid unnecessary jargon.
+
+Service/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Observability instrumentation plan / Plan de instrumentacion de observabilidad",
+            category="Debugging",
+            tags=[*shared, "observability", "logging", "metrics", "tracing"],
+            rating=5,
+            body="""ES:
+Crea un plan para instrumentar este sistema para diagnosticar problemas. Devuelve:
+- Metricas clave (latencia, errores, colas, recursos) con nombres sugeridos
+- Logs: eventos, campos obligatorios, niveles, redaccion de PII
+- Traces: spans principales y atributos
+- Dashboards y alertas iniciales
+- Estrategia de muestreo y coste
+Reglas: no incluyas datos sensibles; propone campos anonimizados/hashes si hace falta.
+
+Sistema/Contexto:
+{context}
+
+EN:
+Create a plan to instrument this system for debugging. Return:
+- Key metrics (latency, errors, queues, resources) with suggested names
+- Logs: events, required fields, levels, PII redaction
+- Traces: main spans and attributes
+- Initial dashboards and alerts
+- Sampling + cost strategy
+Rules: avoid sensitive data; suggest anonymized fields/hashes when needed.
+
+System/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Test pyramid alignment / Alineacion con piramide de pruebas",
+            category="Debugging",
+            tags=[*shared, "testing", "quality", "strategy", "ci"],
+            rating=4,
+            body="""ES:
+Evalua nuestra estrategia de pruebas con respecto a la piramide (unit/integration/e2e). Devuelve:
+1) Diagnostico (donde estamos desbalanceados)
+2) Riesgos (flakiness, coste, cobertura real)
+3) 5 cambios concretos para mejorar (con prioridad)
+4) Reglas practicas: que probar en cada nivel
+Reglas: adapta recomendaciones al stack y restricciones del repo.
+
+Repositorio/Contexto:
+{context}
+
+EN:
+Evaluate our test strategy against the test pyramid (unit/integration/e2e). Return:
+1) Diagnosis (where we're imbalanced)
+2) Risks (flakiness, cost, true coverage)
+3) 5 concrete improvements (prioritized)
+4) Practical rules: what to test at each level
+Rules: tailor recommendations to the repo's stack and constraints.
+
+Repo/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Deterministic output checklist / Checklist de salida determinista",
+            category="Prompts",
+            tags=[*shared, "prompts", "determinism", "format", "quality"],
+            rating=4,
+            body="""ES:
+Convierte esta tarea en una salida lo mas determinista posible. Devuelve:
+- Variables de entrada (con valores por defecto)
+- Reglas de formato (titulos, listas, orden)
+- Prohibiciones (lo que NO debe aparecer)
+- Criterios de validacion (checks que el usuario puede hacer)
+- Un ejemplo de salida con datos ficticios
+Reglas: evita pedir "creatividad"; prioriza estructura y verificabilidad.
+
+Tarea/Contexto:
+{context}
+
+EN:
+Turn this task into the most deterministic output possible. Return:
+- Input variables (with defaults)
+- Formatting rules (headings, lists, ordering)
+- Prohibitions (what must NOT appear)
+- Validation criteria (checks the user can run)
+- One sample output with dummy data
+Rules: avoid asking for "creativity"; prioritize structure and verifiability.
+
+Task/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Model-agnostic prompt template / Plantilla de prompt agnostica",
+            category="Prompts",
+            tags=[*shared, "prompts", "template", "model-agnostic", "structure"],
+            rating=4,
+            body="""ES:
+Escribe un prompt agnostico al modelo para esta tarea. Devuelve:
+<objetivo>...</objetivo>
+<contexto>...</contexto>
+<restricciones>...</restricciones>
+<salida>...</salida>
+<criterios>...</criterios>
+Incluye placeholders {variables} y un ejemplo corto de uso.
+Reglas: no menciones modelos ni marcas; enfocate en instrucciones verificables.
+
+Tarea/Contexto:
+{context}
+
+EN:
+Write a model-agnostic prompt template for this task. Return:
+<goal>...</goal>
+<context>...</context>
+<constraints>...</constraints>
+<output>...</output>
+<criteria>...</criteria>
+Include {placeholders} and a short usage example.
+Rules: do not mention models or brands; focus on verifiable instructions.
+
+Task/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Risk register builder / Constructor de registro de riesgos",
+            category="Productivity",
+            tags=[*shared, "risk", "planning", "mitigation", "project"],
+            rating=4,
+            body="""ES:
+Crea un registro de riesgos para este proyecto. Devuelve una tabla con:
+- Riesgo
+- Probabilidad (baja/media/alta)
+- Impacto (bajo/medio/alto)
+- Senales tempranas
+- Mitigacion preventiva
+- Plan de contingencia
+- Owner (si se conoce, si no "TBD")
+Reglas: no inventes owners; manten 8-12 riesgos max.
+
+Proyecto/Contexto:
+{context}
+
+EN:
+Create a risk register for this project. Return a table with:
+- Risk
+- Likelihood (low/med/high)
+- Impact (low/med/high)
+- Early signals
+- Preventive mitigation
+- Contingency plan
+- Owner (if known, else "TBD")
+Rules: don't invent owners; keep to 8-12 risks max.
+
+Project/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Stakeholder update memo / Memo de estado a stakeholders",
+            category="Productivity",
+            tags=[*shared, "communication", "status", "stakeholders", "writing"],
+            rating=4,
+            body="""ES:
+Redacta un update semanal para stakeholders. Secciones:
+1) Resumen (3 bullets max)
+2) Progreso (hechos concretos)
+3) Bloqueos/riesgos (con mitigacion)
+4) Proximos pasos (1-2 semanas)
+5) Decisiones necesarias (si aplica)
+Reglas: evita jerga tecnica; no inventes fechas/metricas.
+
+Contexto:
+{context}
+
+EN:
+Draft a weekly stakeholder update. Sections:
+1) Summary (max 3 bullets)
+2) Progress (concrete facts)
+3) Blockers/risks (with mitigation)
+4) Next steps (1-2 weeks)
+5) Decisions needed (if any)
+Rules: avoid technical jargon; don't invent dates/metrics.
+
+Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="UX microcopy for empty states / Microcopy UX para estados vacios",
+            category="Design",
+            tags=[*shared, "ux", "microcopy", "empty-state", "product"],
+            rating=4,
+            body="""ES:
+Escribe microcopy para estos estados vacios y errores. Para cada estado devuelve:
+- Titulo (<= 40 chars)
+- Mensaje (1-2 frases)
+- CTA principal y secundario
+- Nota de accesibilidad (si aplica)
+Reglas: tono humano; no culpes al usuario; evita promesas legales.
+
+Estados:
+{context}
+
+EN:
+Write microcopy for these empty and error states. For each state return:
+- Title (<= 40 chars)
+- Message (1-2 sentences)
+- Primary and secondary CTA
+- Accessibility note (if relevant)
+Rules: human tone; don't blame the user; avoid legal promises.
+
+States:
+{context}""",
+        ),
+        PromptCreate(
+            title="Figma handoff checklist / Checklist de handoff de Figma",
+            category="Design",
+            tags=[*shared, "design", "figma", "handoff", "frontend"],
+            rating=4,
+            body="""ES:
+Crea un checklist de handoff de Figma a implementacion. Incluye:
+- Tokens (colores, tipografia, espaciado)
+- Estados (hover/focus/disabled/loading/empty/error)
+- Responsive/breakpoints
+- Accesibilidad (contraste, focus, labels)
+- Assets (iconos, ilustraciones) y formatos
+- Analitica/eventos (si aplica)
+Reglas: que sea accionable para devs; max 20 items.
+
+Pantalla/Contexto:
+{context}
+
+EN:
+Create a Figma-to-implementation handoff checklist. Include:
+- Tokens (colors, type, spacing)
+- States (hover/focus/disabled/loading/empty/error)
+- Responsive/breakpoints
+- Accessibility (contrast, focus, labels)
+- Assets (icons, illustrations) and formats
+- Analytics/events (if applicable)
+Rules: make it actionable for devs; max 20 items.
+
+Screen/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Competitive positioning statement / Declaracion de posicionamiento competitivo",
+            category="Marketing",
+            tags=[*shared, "marketing", "positioning", "competitive", "strategy"],
+            rating=4,
+            body="""ES:
+Escribe un posicionamiento claro usando este formato:
+- Para (audiencia)
+- Que necesita (problema)
+- Nuestro producto (categoria)
+- Ofrece (beneficio clave)
+- A diferencia de (alternativas)
+- Porque (pruebas)
+Luego genera 3 variantes mas cortas (tweet, tagline, H1).
+Reglas: no inventes pruebas; marca [necesita dato] donde falte evidencia.
+
+Contexto:
+{context}
+
+EN:
+Write a clear positioning statement using:
+- For (audience)
+- Who needs (problem)
+- Our product (category)
+- Provides (key benefit)
+- Unlike (alternatives)
+- Because (proof)
+Then generate 3 shorter variants (tweet, tagline, H1).
+Rules: don't invent proof; mark [needs data] when evidence is missing.
+
+Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Content brief for blog post / Brief de contenido para post",
+            category="Marketing",
+            tags=[*shared, "content", "marketing", "seo", "writing"],
+            rating=4,
+            body="""ES:
+Crea un brief SEO para un post de blog. Devuelve:
+- Publico objetivo y nivel
+- Intencion de busqueda
+- Outline H2/H3
+- Puntos clave y ejemplos
+- FAQ (5)
+- Call to action
+- Palabras clave secundarias (10)
+Reglas: no inventes datos; si necesitas fuentes, pide cuales usar.
+
+Tema/Contexto:
+{context}
+
+EN:
+Create an SEO content brief for a blog post. Return:
+- Target audience and level
+- Search intent
+- H2/H3 outline
+- Key points and examples
+- FAQ (5)
+- Call to action
+- Secondary keywords (10)
+Rules: don't invent data; if you need sources, ask which to use.
+
+Topic/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Customer interview guide / Guia de entrevista a clientes",
+            category="Research",
+            tags=[*shared, "research", "interviews", "product", "discovery"],
+            rating=5,
+            body="""ES:
+Genera una guia de entrevista para entender el problema del usuario. Devuelve:
+- Objetivo (1-2 frases)
+- Preguntas (10-12) abiertas, ordenadas por fase (contexto, comportamiento, dolor, alternativas)
+- 3 preguntas de profundizacion ("por que", "cuentame mas")
+- Red flags de sesgo (cosas a evitar)
+- Plantilla de notas (secciones)
+Reglas: no pidas datos personales; no hagas preguntas que sugieran la respuesta.
+
+Producto/Contexto:
+{context}
+
+EN:
+Generate an interview guide to understand the user's problem. Return:
+- Goal (1-2 sentences)
+- Questions (10-12) open-ended, ordered by phase (context, behavior, pain, alternatives)
+- 3 follow-up probes ("why", "tell me more")
+- Bias red flags (things to avoid)
+- Notes template (sections)
+Rules: don't ask for personal data; avoid leading questions.
+
+Product/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Research question to search queries / Pregunta de investigacion a queries",
+            category="Research",
+            tags=[*shared, "research", "search", "queries", "literature"],
+            rating=4,
+            body="""ES:
+Convierte esta pregunta de investigacion en un set de queries de busqueda. Devuelve:
+- 10 queries (Google/Scholar) con sinonimos y operadores
+- 5 terminos excluidos (NOT) para filtrar ruido
+- 3 estrategias de ampliacion (snowballing, citas, autores)
+- Criterios de inclusion/exclusion
+Reglas: evita terminos de marca si no son esenciales; prioriza reproducibilidad.
+
+Pregunta:
+{context}
+
+EN:
+Turn this research question into a set of search queries. Return:
+- 10 queries (Google/Scholar) with synonyms and operators
+- 5 excluded terms (NOT) to filter noise
+- 3 expansion strategies (snowballing, citations, authors)
+- Inclusion/exclusion criteria
+Rules: avoid brand terms unless essential; prioritize reproducibility.
+
+Question:
+{context}""",
+        ),
+        PromptCreate(
+            title="Agent termination criteria / Criterios de parada del agente",
+            category="Agents",
+            tags=[*shared, "agents", "guardrails", "stopping", "quality"],
+            rating=4,
+            body="""ES:
+Define criterios claros para que un agente se detenga o pida ayuda. Devuelve:
+- Condiciones de "done" (verificables)
+- Condiciones de "blocked" (que informacion falta)
+- Presupuesto (tiempo/iteraciones) y cuando abortar
+- Checks antes de terminar (tests, lint, sanity)
+- Mensaje final estandar (resumen + riesgos + siguientes pasos)
+Reglas: evita bucles infinitos; exige evidencia antes de afirmar exito.
+
+Tarea/Contexto:
+{context}
+
+EN:
+Define clear criteria for an agent to stop or ask for help. Return:
+- "Done" conditions (verifiable)
+- "Blocked" conditions (what info is missing)
+- Budget (time/iterations) and when to abort
+- Pre-finish checks (tests, lint, sanity)
+- Standard final message (summary + risks + next steps)
+Rules: avoid infinite loops; require evidence before claiming success.
+
+Task/Context:
+{context}""",
+        ),
+        PromptCreate(
+            title="Prompt red-teaming / Red-teaming de prompt",
+            category="Prompts",
+            tags=[*shared, "prompts", "safety", "evaluation", "adversarial"],
+            rating=5,
+            body="""ES:
+Haz red-teaming de este prompt: encuentra ambiguedades, fallos previsibles y vectores de abuso. Devuelve:
+1) 8 ataques/edge-cases (input malicioso o confuso)
+2) Para cada uno: por que falla, severidad y mitigacion (cambio minimo al prompt)
+3) Version endurecida del prompt
+Reglas: no generes contenido ilegal; enfocate en mejorar instrucciones y limites.
+
+Prompt:
+{context}
+
+EN:
+Red-team this prompt: find ambiguities, likely failure modes, and abuse vectors. Return:
+1) 8 attacks/edge-cases (malicious or confusing inputs)
+2) For each: why it fails, severity, and mitigation (minimal prompt change)
+3) Hardened prompt version
+Rules: do not generate illegal content; focus on strengthening instructions and boundaries.
+
+Prompt:
+{context}""",
+        ),
+        PromptCreate(
+            title="ChatGPT tool-use decision tree / Arbol de decision de uso de tools ChatGPT",
+            category="Prompts for ChatGPT",
+            tags=[*shared, "chatgpt", "tools", "decision", "workflow"],
+            rating=4,
+            body="""ES:
+Crea un arbol de decision para decidir si usar herramientas externas o responder sin ellas. Devuelve:
+- 6-10 reglas tipo "si/entonces" (verificables)
+- Ejemplos de cuando SI usar tool (con justificacion)
+- Ejemplos de cuando NO usar tool
+- Formato de respuesta cuando se usa tool (pasos + resultado)
+Reglas: se conservador con datos cambiantes; si hay riesgo de estar desactualizado, recomienda verificar.
+
+Tarea/Contexto:
+{context}
+
+EN:
+Create a decision tree for when to use external tools vs answer directly. Return:
+- 6-10 "if/then" rules (verifiable)
+- Examples of when to use a tool (with justification)
+- Examples of when NOT to use a tool
+- Response format when a tool is used (steps + result)
+Rules: be conservative with time-sensitive facts; if there's a risk of being outdated, recommend verification.
+
+Task/Context:
+{context}""",
+        ),
     ]
